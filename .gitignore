@@ -12,3 +12,4 @@ Cargo.lock
 .DS_Store
 wfx-fullMAC-driver
 wfx_fmac_driver
+a.out
