@@ -1,4 +1,4 @@
-# exp4
+# exp04
 
 The objective of this experiment is to implement enough of the wfx_host api
 functions to stop the linker errors from experiment 3. The implementations

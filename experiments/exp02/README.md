@@ -1,4 +1,4 @@
-# exp2
+# exp02
 
 The objective of this experiment is to call a function from sl_wfx.h,
 compile main.c, and get a linker error about missing symbols.

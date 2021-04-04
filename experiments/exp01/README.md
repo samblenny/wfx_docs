@@ -1,4 +1,4 @@
-# exp1
+# exp01
 
 The objective of this experiment is to include `sl_wfx.h` in a minimal C file
 and compile without any errors about missing header files.

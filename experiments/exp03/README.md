@@ -1,4 +1,4 @@
-# exp3
+# exp03
 
 The objective of this experiment is to call a function from sl_wfx.h,
 compile main.c and the wfx_fmac_driver library, and get linker errors
