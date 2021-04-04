@@ -1,0 +1,858 @@
+# exp4
+
+The objective of this experiment is to implement enough of the wfx_host api
+functions to stop the linker errors from experiment 3. The implementations
+are empty except for debug tracing printf calls.
+
+
+## Console Log
+
+```bash
+$ ls
+Makefile   README.md  host_api.c main.c
+$ make
+gcc -I ../wfx_fmac_driver main.c host_api.c ../wfx_fmac_driver/bus/sl_wfx_bus.c ../wfx_fmac_driver/bus/sl_wfx_bus_spi.c ../wfx_fmac_driver/sl_wfx.c
+$ ./a.out
+init_bus
+reset_chip
+spi_cs_assert
+spi_transfer_no_cs_assert 0x8002 0x40000D03
+spi_cs_deassert
+spi_cs_assert
+spi_transfer_no_cs_assert 0x0002 0x56000D07
+spi_cs_deassert
+spi_cs_assert
+spi_transfer_no_cs_assert 0x8002 0x0056070D
+spi_cs_deassert
+spi_cs_assert
+spi_transfer_no_cs_assert 0x6002 0x75872007
+spi_cs_deassert
+spi_cs_assert
+spi_transfer_no_cs_assert 0x6002 0x20C02E08
+spi_cs_deassert
+spi_cs_assert
+spi_transfer_no_cs_assert 0x6002 0x3C3C3C09
+spi_cs_deassert
+spi_cs_assert
+spi_transfer_no_cs_assert 0x6002 0x442C320B
+spi_cs_deassert
+spi_cs_assert
+spi_transfer_no_cs_assert 0x6002 0x9764A00C
+spi_cs_deassert
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+spi_cs_assert
+spi_transfer_no_cs_assert 0x1002 0x01100000
+spi_cs_deassert
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x9002 0x01000000
+spi_cs_deassert
+wait 1ms
+spi_cs_assert
+spi_transfer_no_cs_assert 0x8002 0x07000000
+spi_cs_deassert
+spi_cs_assert
+spi_transfer_no_cs_assert 0x0002 0x07000000
+spi_cs_deassert
+disable_platform_interrupt
+deinit_bus
+deinit
+$
+```
