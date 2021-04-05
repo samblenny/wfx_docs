@@ -1,4 +1,4 @@
-# exp04
+# exp05
 
 The objectives of this experiment are to turn on `wfx_fmac_driver`'s builtin
 debug logging by defining `SL_WFX_DEBUG_MASK` and to begin exploring what
