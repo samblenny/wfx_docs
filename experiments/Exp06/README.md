@@ -14,7 +14,9 @@ built in debug logging enabled.
    be non-deterministic due to the use of uninitialized stack variables.
 
 2. Early Termination: The debug log of the Feather M4 port ends much sooner
-   than exp05. So far, I haven't figured out why.
+   than exp05 because `bus/sl_wfx_bus_spi.c::sl_wfx_init_bus()` considers a
+   return value of `0` from reading the config register to be an error:
+   https://github.com/samblenny/wfx-fullMAC-driver/blob/include-paths/wfx_fmac_driver/bus/sl_wfx_bus_spi.c#L96-L99
 
 
 ## Arduino IDE Serial Monitor Log
