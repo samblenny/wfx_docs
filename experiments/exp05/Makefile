@@ -1,3 +1,4 @@
+CC=clang
 LIB=../wfx_fmac_driver
 BUS=$(LIB)/bus
 BUS_C_FILES=$(BUS)/sl_wfx_bus.c $(BUS)/sl_wfx_bus_spi.c
@@ -11,7 +12,7 @@ DEBUG=-DSL_WFX_DEBUG_MASK=0x007fff
 
 
 all: main.c
-	gcc -I $(LIB) $(WARN) $(IGNORE) $(DEBUG) main.c host_api.c $(BUS_C_FILES) $(LIB)/sl_wfx.c
+	$(CC) -I $(LIB) $(WARN) $(IGNORE) $(DEBUG) main.c host_api.c $(BUS_C_FILES) $(LIB)/sl_wfx.c
 
 .PHONY: clean
 clean:
