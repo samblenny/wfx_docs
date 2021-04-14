@@ -7,7 +7,7 @@ Objectives:
    allowing `sl_wfx_init()` to continue beyond initializing the bus
 
 2. Modify debug printing in `host_api.c` to work with both Darwin stdout and
-   Arduino `Serial.print()`, which does not take printf style format strings
+   Arduino `Serial.print()`, which does not take `printf` style format strings
 
 
 ## Weirdness
@@ -31,7 +31,9 @@ logs 3 and 4 below).
 
 ## Console Log 1 (Darwin stdout)
 
-This uses the zero-buf branch of samblenny/wfx-fullMAC-driver
+This uses the zero-buf branch of samblenny/wfx-fullMAC-driver at commit
+[8901519](https://github.com/samblenny/wfx-fullMAC-driver/commit/890151953fa56da7370bfdc117043ab6de8fe3b8)
+(before the fix to `bus/sl_wfx_bus.c::sl_wfx_reg_read_16()`)
 
 ```
 $ make
@@ -77,7 +79,8 @@ $
 
 ## Console Log 2 (Arduino IDE serial monitor with uninitialized array bug)
 
-This uses the zero-buf branch of samblenny/wfx-fullMAC-driver at commit 8901519
+This uses the zero-buf branch of samblenny/wfx-fullMAC-driver at commit
+[8901519](https://github.com/samblenny/wfx-fullMAC-driver/commit/890151953fa56da7370bfdc117043ab6de8fe3b8)
 (before the fix to `bus/sl_wfx_bus.c::sl_wfx_reg_read_16()`)
 
 ```
@@ -105,8 +108,9 @@ deinit
 
 ## Console Log 3 (Darwin stdout with zeroed array fix)
 
-This uses the zero-buf branch of samblenny/wfx-fullMAC-driver at commit 261478e,
-after fixing uninitialized buffer in `bus/sl_wfx_bus.c::sl_wfx_reg_read_16()`
+This uses the zero-buf branch of samblenny/wfx-fullMAC-driver at commit
+[261478e](https://github.com/samblenny/wfx-fullMAC-driver/commit/261478edcfc367612d9cac2157ba2724cb818bd9)
+(after fixing `bus/sl_wfx_bus.c::sl_wfx_reg_read_16()`)
 
 ```
 $ make
@@ -151,8 +155,9 @@ deinit
 
 ## Console Log 4 (Arduino IDE serial monitor with zeroed array fix)
 
-This uses the zero-buf branch of samblenny/wfx-fullMAC-driver at commit 261478e,
-after fixing uninitialized buffer in `bus/sl_wfx_bus.c::sl_wfx_reg_read_16()`
+This uses the zero-buf branch of samblenny/wfx-fullMAC-driver at commit
+[261478e](https://github.com/samblenny/wfx-fullMAC-driver/commit/261478edcfc367612d9cac2157ba2724cb818bd9)
+(after fixing `bus/sl_wfx_bus.c::sl_wfx_reg_read_16()`)
 
 ```
 init_bus
