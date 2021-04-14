@@ -65,4 +65,38 @@ This uses the zero-buf branch of samblenny/wfx-fullMAC-driver at commit
 (after fixing `bus/sl_wfx_bus.c::sl_wfx_reg_read_16()`)
 
 ```
+init_bus
+reset_chip
+CS0; spi_xfer 0x8002 0x00000000 -> R(addr:0,len:2,oBuf:0x00000000) iBuf:0x04000000; CS1
+CS0; spi_xfer 0x0002 0x56000404 -> W(addr:0,len:2,oBuf:0x04045600) iBuf:0x04000000; CS1
+CS0; spi_xfer 0x8002 0x00000000 -> R(addr:0,len:2,oBuf:0x00000000) iBuf:0x04000000; CS1
+CS0; spi_xfer 0x6002 0x75872007 -> W(addr:6,len:2,oBuf:0x07208775) iBuf:0x75872007; CS1
+CS0; spi_xfer 0x6002 0x20C02E08 -> W(addr:6,len:2,oBuf:0x082EC020) iBuf:0x20C02E08; CS1
+CS0; spi_xfer 0x6002 0x3C3C3C09 -> W(addr:6,len:2,oBuf:0x093C3C3C) iBuf:0x3C3C3C09; CS1
+CS0; spi_xfer 0x6002 0x442C320B -> W(addr:6,len:2,oBuf:0x0B322C44) iBuf:0x442C320B; CS1
+CS0; spi_xfer 0x6002 0x9764A00C -> W(addr:6,len:2,oBuf:0x0CA06497) iBuf:0x9764A00C; CS1
+CS0; spi_xfer 0x9002 0x00000000 -> R(addr:1,len:2,oBuf:0x00000000) iBuf:0x00200000; CS1
+CS0; spi_xfer 0x1002 0x00300000 -> W(addr:1,len:2,oBuf:0x00003000) iBuf:0x00300000; CS1
+CS0; spi_xfer 0x9002 0x00000000 -> R(addr:1,len:2,oBuf:0x00000000) iBuf:0x00200000; CS1
+CS0; spi_xfer 0x8002 0x00040000 -> R(addr:0,len:2,oBuf:0x00000004) iBuf:0x04000000; CS1
+CS0; spi_xfer 0x4002 0x10C00009 -> W(addr:4,len:2,oBuf:0x0900C010) iBuf:0x10C00009; CS1
+CS0; spi_xfer 0x8002 0x00000000 -> R(addr:0,len:2,oBuf:0x00000000) iBuf:0x04000000; CS1
+CS0; spi_xfer 0x0002 0x24000000 -> W(addr:0,len:2,oBuf:0x00002400) iBuf:0x04000000; CS1
+CS0; spi_xfer 0x8002 0x00040000 -> R(addr:0,len:2,oBuf:0x00000004) iBuf:0x04000000; CS1
+CS0; spi_xfer 0xD002 0x00000000 -> R(addr:5,len:2,oBuf:0x00000000) iBuf:0x8EC8AB23; CS1
+CS0; spi_xfer 0x8002 0x8EC8AB23 -> R(addr:0,len:2,oBuf:0xAB238EC8) iBuf:0x04000000; CS1
+CS0; spi_xfer 0x0002 0x04000000 -> W(addr:0,len:2,oBuf:0x00000400) iBuf:0x04000000; CS1
+CS0; spi_xfer 0x4002 0x00400009 -> W(addr:4,len:2,oBuf:0x09004000) iBuf:0x00400009; CS1
+CS0; spi_xfer 0x5002 0x8EC8AB23 -> W(addr:5,len:2,oBuf:0x23ABC88E) iBuf:0x8EC8AB23; CS1
+CS0; spi_xfer 0x4002 0x00400009 -> W(addr:4,len:2,oBuf:0x09004000) iBuf:0x00400009; CS1
+CS0; spi_xfer 0x8002 0x00000000 -> R(addr:0,len:2,oBuf:0x00000000) iBuf:0x04000000; CS1
+CS0; spi_xfer 0x0002 0x24000000 -> W(addr:0,len:2,oBuf:0x00002400) iBuf:0x04000000; CS1
+CS0; spi_xfer 0x8002 0x00040000 -> R(addr:0,len:2,oBuf:0x00000004) iBuf:0x04000000; CS1
+CS0; spi_xfer 0xD002 0x00040000 -> R(addr:5,len:2,oBuf:0x00000400) iBuf:0x8EC8AB23; CS1
+setup_waited_event
+CS0; spi_xfer 0x8002 0x00000000 -> R(addr:0,len:2,oBuf:0x00000000) iBuf:0x04000000; CS1
+CS0; spi_xfer 0x0002 0x04000000 -> W(addr:0,len:2,oBuf:0x00000400) iBuf:0x04000000; CS1
+irq=off
+deinit_bus
+deinit
 ```
