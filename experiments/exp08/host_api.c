@@ -84,7 +84,7 @@ sl_status_t sl_wfx_host_sleep_grant(
 sl_status_t sl_wfx_host_setup_waited_event(uint8_t event_id)
 {
     dbg("setup_waited_event\n");
-    return SL_STATUS_FAIL;
+    return SL_STATUS_OK;
 }
 
 sl_status_t sl_wfx_host_wait_for_confirmation(
@@ -100,7 +100,7 @@ sl_status_t sl_wfx_host_wait(uint32_t wait_ms)
 {
     dbg("wait ");
     dbg_u32(wait_ms);
-    dbg("ms; ");
+    dbg("ms\n");
     return SL_STATUS_OK;
 }
 
@@ -186,6 +186,10 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
     uint8_t *buffer,
     uint16_t buffer_length)
 {
+    // State variables for keeping in sync with wfx driver
+    static uint32_t sram_base_address = 0;
+    static uint32_t ncp_status_tick = 0;
+
     // Debug print the raw byte array arguments
     dbg("spi_xfer 0x");
     for(int i=0; i < header_length; i++) {
@@ -226,9 +230,7 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
         dbg(",oBuf:0x");
         dbg_hex32(buf);
         dbg(")");
-        bool addr_is_config_reg = cmd_addr == SL_WFX_CONFIG_REG_ID;
-        bool addr_is_control_reg = cmd_addr == SL_WFX_CONTROL_REG_ID;
-        if(addr_is_control_reg) {
+        if(cmd_addr == SL_WFX_CONTROL_REG_ID) {
             // When sl_wfx_init_chip() writes control with WUP bit set, it
             // expects to see responses with RDY set, or else it goes into a
             // big polling loop. So, claim to be always RDY.
@@ -238,7 +240,7 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
             buffer[2] = (uint8_t)((buf<<8)>>24);
             buffer[1] = (uint8_t)((buf<<16)>>24);
             buffer[0] = (uint8_t)((buf<<24)>>24);
-        } else if(addr_is_config_reg) {
+        } else if(cmd_addr == SL_WFX_CONFIG_REG_ID) {
             // This needs to be something other than 0x00000000 or 0xFFFFFFFF,
             // or else sl_wfx_init_bus() will abort with SL_STATUS_FAIL.
             // sl_wfx_init_chip() checks for SL_WFX_CONFIG_ACCESS_MODE_BIT,
@@ -249,11 +251,29 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
             buffer[3] = (uint8_t)((buf<<8)>>24);
             buffer[0] = (uint8_t)((buf<<16)>>24);
             buffer[1] = (uint8_t)((buf<<24)>>24);
+        } else if(cmd_rw == 'W' && cmd_addr == SL_WFX_SRAM_BASE_ADDR_REG_ID) {
+            sram_base_address = buf;
         } else if(cmd_addr == SL_WFX_SRAM_DPORT_REG_ID) {
-            // sl_wfx_download_run_bootloader() calls
-            // sl_wfx_apb_read_32(ADDR_DOWNLOAD_FIFO_BASE, &value32)
-            // and expects a return value of 0x23abc88e
-            buf = 0x23abc88e;
+            // Lookup table of SRAM reads
+            if (sram_base_address == ADDR_DWL_CTRL_AREA_NCP_STATUS) {
+                switch(ncp_status_tick) {
+                case 0:
+                    // sl_wfx_download_run_firmware() reads this first
+                    break;
+                case 1:
+                    // sl_wfx_download_run_firmware() checks for this second
+                    buf = NCP_STATE_INFO_READY;
+                    break;
+                case 2:
+                    // sl_wfx_download_run_firmware() checks for this third
+                    buf = NCP_STATE_READY;
+                    break;
+                }
+                ncp_status_tick++;
+            } else if (sram_base_address == ADDR_DOWNLOAD_FIFO_BASE) {
+                // sl_wfx_download_run_bootloader() checks for this
+                buf = 0x23abc88e;
+            }
             // Re-pack buffer (Mode2) with the output value of buf
             buffer[3] = (uint8_t)(buf>>24);
             buffer[2] = (uint8_t)((buf<<8)>>24);
