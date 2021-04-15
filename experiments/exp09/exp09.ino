@@ -17,7 +17,7 @@ extern "C" {
 
 void setup() {
   sl_status_t status;
-  Serial.begin(57600);
+  Serial.begin(115200);
   while (!Serial) {;}
   status = sl_wfx_init(&context);
 }
