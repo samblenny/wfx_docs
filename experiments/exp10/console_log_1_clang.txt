@@ -1,0 +1,21 @@
+--Bus initialized--
+--Chip initialized--
+--Bootloader running--
+HOST_STATE_OK_TO_JUMP    ) -> OK(0x174FC882)
+--Firmware downloaded--
+irq=on
+SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x00000400)
+SPI(0x0002, 0x04000001) -> W(Config_R=0x00010400               ) -> OK(0x00000400)
+SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x00000400)
+SPI(0x0002, 0x00000000) -> W(Config_R=0x00000000               ) -> OK(0x00000400)
+--Message mode set--
+wait_for_confirmation: SL_WFX_STARTUP_IND_ID
+set_wake_up_pin
+get_pds_size: 48
+get_pds_data(*data:$NOISE, index:0) -> OK(*pds_data-start=0)
+allocate_buffer
+SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x00000400)
+SPI(0x0002, 0x04000000) -> W(Config_R=0x00000400               ) -> OK(0x00000400)
+irq=off
+deinit_bus
+deinit
