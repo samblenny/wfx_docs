@@ -11,9 +11,10 @@ SPI(0x0002, 0x00000000) -> W(Config_R=0x00000000               ) -> OK(0x0000040
 --Message mode set--
 wait_for_confirmation: SL_WFX_STARTUP_IND_ID
 set_wake_up_pin
-get_pds_size: 48
-get_pds_data(*data:$NOISE, index:0) -> OK(*pds_data-start=0)
-allocate_buffer
+get_pds_size: 6 lines
+get_pds_data(*pds_data:..., index:0) -> OK(*pds_data-start=0)
+allocate_buffer(**bufer:..., type:CONTROL_BUFFER, buffer_size:20) -> OK(*buffer=&_alloc_pool[0])
+free_buffer -> OK
 SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x00000400)
 SPI(0x0002, 0x04000000) -> W(Config_R=0x00000400               ) -> OK(0x00000400)
 irq=off

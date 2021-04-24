@@ -37,6 +37,11 @@ void sl_wfx_host_log(const char *string, ...)
 //    get events from the queue for sl_wfx_host_post_event()
 static sl_wfx_startup_ind_t _startup_info;
 
+// Memory pool for host_allocate_buffer
+#define ALLOC_POOL_SIZE 4096
+static uint8_t _alloc_pool[ALLOC_POOL_SIZE];
+static uint32_t _alloc_next = 0;
+
 /*
  * sl_wfx_* API function implementations
  */
@@ -44,6 +49,8 @@ static sl_wfx_startup_ind_t _startup_info;
 sl_status_t sl_wfx_host_init(void)
 {
     dbg("init\n");
+    memset(_alloc_pool, 0, ALLOC_POOL_SIZE);
+    _alloc_next = 0;
     return SL_STATUS_OK;
 }
 
@@ -101,19 +108,16 @@ sl_status_t sl_wfx_host_get_pds_data(const char **pds_data, uint16_t index)
         dbg(": *pds_data == NULL\n");
         return SL_STATUS_FAIL;
     }
+    // pds_table_brd8022a is an array of strings, one line per string
     const uint16_t lines = sizeof(pds_table_brd8022a) / sizeof(const char *);
-    if(index < lines) {
-        dbg("(*pds_data:");
-        dbg_u32((uint32_t)(*pds_data));
-        dbg(", index:");
-    }
+    dbg("(*pds_data:..., index:");
     dbg_u32(index);
     dbg(")");
-    if(index <= lines) {
+    if(index < lines) {
         // Get a line of the PDS array as requested by index
         *pds_data = pds_table_brd8022a[index];
     } else {
-        dbg(" -> FAIL\n");
+        dbg(" -> FAIL(index >= lines)\n");
         return SL_STATUS_FAIL;
     }
     dbg(" -> OK(*pds_data-start=");
@@ -230,14 +234,47 @@ sl_status_t sl_wfx_host_allocate_buffer(
     sl_wfx_buffer_type_t type,
     uint32_t buffer_size)
 {
-    dbg("allocate_buffer\n");
+    dbg("allocate_buffer");
+    if(buffer == NULL) {
+        dbg(": buffer == NULL\n");
+        return SL_STATUS_FAIL;
+    }
+    dbg("(**bufer:..., type:");
+    switch(type) {
+    case SL_WFX_TX_FRAME_BUFFER:
+        dbg("TX_FRAME_BUFFER");
+        break;
+    case SL_WFX_RX_FRAME_BUFFER:
+        dbg("RX_FRAME_BUFFER");
+        break;
+    case SL_WFX_CONTROL_BUFFER:
+        dbg("CONTROL_BUFFER");
+        break;
+    default:
+        dbg("???");
+    }
+    dbg(", buffer_size:");
+    dbg_u32(buffer_size);
+    dbg(") -> ");
+    // Allocate a chunk of the pool
+    if(_alloc_next + buffer_size < ALLOC_POOL_SIZE) {
+        *buffer = &_alloc_pool[_alloc_next];
+        dbg("OK(*buffer=&_alloc_pool[");
+        dbg_u32(_alloc_next);
+        _alloc_next += buffer_size;
+        dbg("])");
+    } else {
+        return SL_STATUS_FAIL;
+    }
+    dbg("\n");
     return SL_STATUS_FAIL;
 }
 
 sl_status_t sl_wfx_host_free_buffer(void *buffer, sl_wfx_buffer_type_t type)
 {
-    dbg("free_buffer\n");
-    return SL_STATUS_FAIL;
+    dbg("free_buffer -> OK\n");
+    // TODO: improve upon just allowing buffer to leak
+    return SL_STATUS_OK;
 }
 
 sl_status_t sl_wfx_host_transmit_frame(void *frame, uint32_t frame_len)
