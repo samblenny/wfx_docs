@@ -96,37 +96,35 @@ sl_status_t sl_wfx_host_get_firmware_size(uint32_t *firmware_size)
 
 sl_status_t sl_wfx_host_get_pds_data(const char **pds_data, uint16_t index)
 {
-    static const char* seek_ptr = NULL;
     dbg("get_pds_data");
     if(pds_data == NULL) {
         dbg(": *pds_data == NULL\n");
         return SL_STATUS_FAIL;
     }
-    const char *start = (const char *)pds_table_brd8022a;
-    //const char *end = start + sizeof(pds_table_brd8022a);
-    if(index == 0) {
-        dbg("(*data:$NOISE, index:");
-    } else {
-        dbg("(*pds_data-start:");
-        dbg_u32((uint32_t)((*pds_data)-start));
+    const uint16_t lines = sizeof(pds_table_brd8022a) / sizeof(const char *);
+    if(index < lines) {
+        dbg("(*pds_data:");
+        dbg_u32((uint32_t)(*pds_data));
         dbg(", index:");
     }
     dbg_u32(index);
     dbg(")");
-    if(index == 0) {
-        // Seek to start of PDS
-        *pds_data = start;
-        seek_ptr = start + strlen(*pds_data);
+    if(index <= lines) {
+        // Get a line of the PDS array as requested by index
+        *pds_data = pds_table_brd8022a[index];
     } else {
         dbg(" -> FAIL\n");
         return SL_STATUS_FAIL;
     }
     dbg(" -> OK(*pds_data-start=");
-    dbg_u32((uint32_t)(*pds_data-start));
+    dbg_u32((uint32_t)(*pds_data-pds_table_brd8022a[0]));
     dbg(")\n");
     return SL_STATUS_OK;
 }
 
+/*
+ * Get number of lines in the PDS (pds is an array of strings, one line per string)
+ */
 sl_status_t sl_wfx_host_get_pds_size(uint16_t *pds_size)
 {
     dbg("get_pds_size: ");
@@ -134,9 +132,9 @@ sl_status_t sl_wfx_host_get_pds_size(uint16_t *pds_size)
         dbg("*pds_size == NULL\n");
         return SL_STATUS_FAIL;
     }
-    *pds_size = sizeof(pds_table_brd8022a);
+    *pds_size = sizeof(pds_table_brd8022a) / sizeof(const char *);
     dbg_u16(*pds_size);
-    dbg("\n");
+    dbg(" lines\n");
     return SL_STATUS_OK;
 }
 
