@@ -1,0 +1,30 @@
+1,3d0
+< --Bus initialized--
+< --Chip initialized--
+< --Bootloader running--
+5d1
+< --Firmware downloaded--
+11d6
+< --Message mode set--
+23c18
+< get_pds_data(*pds_data:..., index:1) -> OK(*pds_data-start=14)
+---
+> get_pds_data(*pds_data:..., index:1) -> OK(*pds_data-start=855)
+31c26
+< get_pds_data(*pds_data:..., index:2) -> OK(*pds_data-start=332)
+---
+> get_pds_data(*pds_data:..., index:2) -> OK(*pds_data-start=1173)
+39c34
+< get_pds_data(*pds_data:..., index:3) -> OK(*pds_data-start=390)
+---
+> get_pds_data(*pds_data:..., index:3) -> OK(*pds_data-start=1231)
+47c42
+< get_pds_data(*pds_data:..., index:4) -> OK(*pds_data-start=422)
+---
+> get_pds_data(*pds_data:..., index:4) -> OK(*pds_data-start=1263)
+55c50
+< get_pds_data(*pds_data:..., index:5) -> OK(*pds_data-start=611)
+---
+> get_pds_data(*pds_data:..., index:5) -> OK(*pds_data-start=1452)
+63d57
+< --PDS configured--
