@@ -37,8 +37,12 @@ void sl_wfx_host_log(const char *string, ...)
 //    get events from the queue for sl_wfx_host_post_event()
 static sl_wfx_startup_ind_t _startup_info;
 
+// _configuration_reply is used by sl_wfx_send_configuration() as called by
+//
+static sl_wfx_configuration_cnf_t _configuration_reply;
+
 // Memory pool for host_allocate_buffer
-#define ALLOC_POOL_SIZE 4096
+#define ALLOC_POOL_SIZE 1024
 static uint8_t _alloc_pool[ALLOC_POOL_SIZE];
 static uint32_t _alloc_next = 0;
 
@@ -126,9 +130,7 @@ sl_status_t sl_wfx_host_get_pds_data(const char **pds_data, uint16_t index)
     return SL_STATUS_OK;
 }
 
-/*
- * Get number of lines in the PDS (pds is an array of strings, one line per string)
- */
+// Get number of lines in the PDS (pds is an array of strings, one line per string)
 sl_status_t sl_wfx_host_get_pds_size(uint16_t *pds_size)
 {
     dbg("get_pds_size: ");
@@ -177,7 +179,9 @@ sl_status_t sl_wfx_host_sleep_grant(
 
 sl_status_t sl_wfx_host_setup_waited_event(uint8_t event_id)
 {
-    dbg("setup_waited_event\n");
+    dbg("setup_waited_event(event_id:");
+    dbg_u8(event_id);
+    dbg(") -> OK\n");
     return SL_STATUS_OK;
 }
 
@@ -189,15 +193,19 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
     // TODO: The real event payload should come from the queue for events from
     //   sl_wfx_host_post_event().
     //   Use *event_payload_out = sl_wfx_context->event_payload_buffer
-    dbg("wait_for_confirmation: ");
+    dbg("wait_for_confirmation(conf_id:");
+    dbg_u8(confirmation_id);
+    dbg(", timeout_ms:");
+    dbg_u32(timeout_ms);
+    dbg(", ...) -> ");
     if(event_payload_out == NULL) {
-        dbg("event_payload_out == NULL\n");
+        dbg("FAIL(event_payload_out == NULL)\n");
         return SL_STATUS_FAIL;
     }
     switch(confirmation_id) {
     case SL_WFX_STARTUP_IND_ID:
         // TODO: use a real event payload buffer from WF200
-        dbg("SL_WFX_STARTUP_IND_ID\n");
+        dbg("OK(SL_WFX_STARTUP_IND_ID)\n");
         memset(&_startup_info, 0, sizeof(sl_wfx_startup_ind_t));
         // See typedefs at firmware/sl_wfx_general_api.h#L305..L332
         _startup_info.body.firmware_build = 3;
@@ -205,14 +213,43 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
         _startup_info.body.firmware_minor = 2;
         //_startup_info.body.mac_addr[0] = ...;    // sl_wfx_mac_address_t
         //_startup_info.body.mac_addr[1] = ...;    // sl_wfx_mac_address_t
-        _startup_info.body.num_inp_ch_bufs = 1;
+        _startup_info.body.num_inp_ch_bufs = 6;
         //_startup_info.body.opn = ...;            // SL_WFX_OPN_SIZE
         *event_payload_out = &_startup_info;
         return SL_STATUS_OK;
+	case SL_WFX_CONFIGURATION_REQ_ID:
+		dbg("OK(CONFIGURATION_REQ_ID)\n");
+        memset(&_configuration_reply, 0, sizeof(sl_wfx_configuration_cnf_t));
+        _configuration_reply.body.status = SL_STATUS_OK;
+        *event_payload_out = &_configuration_reply;
+        return SL_STATUS_OK;
+	case SL_WFX_CONTROL_GPIO_REQ_ID:
+		dbg("CONTROL_GPIO_REQ_ID ");
+		break;
+	case SL_WFX_PREVENT_ROLLBACK_REQ_ID:
+		dbg("PREVENT_ROLLBACK_REQ_ID ");
+		break;
+	case SL_WFX_PTA_SETTINGS_REQ_ID:
+		dbg("PTA_SETTINGS_REQ_ID ");
+		break;
+	case SL_WFX_PTA_PRIORITY_REQ_ID:
+		dbg("PTA_PRIORITY_REQ_ID ");
+		break;
+	case SL_WFX_PTA_STATE_REQ_ID:
+		dbg("PTA_STATE_REQ_ID ");
+		break;
+	case SL_WFX_SET_CCA_CONFIG_REQ_ID:
+		dbg("SET_CCA_CONFIG_REQ_ID ");
+		break;
+	case SL_WFX_SHUT_DOWN_REQ_ID:
+		dbg("SHUT_DOWN_REQ_ID ");
+		break;
     default:
-        dbg("unknown confirmation_id\n");
+        dbg("FAIL(unknown confirmation_id)\n");
         return SL_STATUS_FAIL;
     }
+    dbg("FAIL(unimplemented)\n");
+    return SL_STATUS_FAIL;
 }
 
 sl_status_t sl_wfx_host_wait(uint32_t wait_ms)
@@ -229,6 +266,7 @@ sl_status_t sl_wfx_host_post_event(sl_wfx_generic_message_t *event_payload)
     return SL_STATUS_FAIL;
 }
 
+// Allocate a buffer
 sl_status_t sl_wfx_host_allocate_buffer(
     void **buffer,
     sl_wfx_buffer_type_t type,
@@ -262,36 +300,40 @@ sl_status_t sl_wfx_host_allocate_buffer(
         dbg("OK(*buffer=&_alloc_pool[");
         dbg_u32(_alloc_next);
         _alloc_next += buffer_size;
-        dbg("])");
+        dbg("])\n");
+        return SL_STATUS_OK;
     } else {
+        dbg("FAIL(pool too small)\n");
         return SL_STATUS_FAIL;
     }
-    dbg("\n");
-    return SL_STATUS_FAIL;
 }
 
+// Free a buffer (currently a NOP)
 sl_status_t sl_wfx_host_free_buffer(void *buffer, sl_wfx_buffer_type_t type)
 {
-    dbg("free_buffer -> OK\n");
+    dbg("free_buffer() -> OK\n");
     // TODO: improve upon just allowing buffer to leak
     return SL_STATUS_OK;
 }
 
+// Transmit frame
 sl_status_t sl_wfx_host_transmit_frame(void *frame, uint32_t frame_len)
 {
-    dbg("transmit_frame\n");
-    return SL_STATUS_FAIL;
+    dbg("transmit_frame(*frame:..., frame_len:");
+    dbg_u32(frame_len);
+    dbg(") -> OK\n");
+    return SL_STATUS_OK;
 }
 
 sl_status_t sl_wfx_host_lock(void)
 {
-    dbg("lock\n");
+    dbg("lock() -> OK\n");
     return SL_STATUS_OK;
 }
 
 sl_status_t sl_wfx_host_unlock(void)
 {
-    dbg("unlock\n");
+    dbg("unlock() -> OK\n");
     return SL_STATUS_OK;
 }
 
