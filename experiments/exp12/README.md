@@ -9,6 +9,14 @@ Objectives:
 3. Implement SPI on Feather M4 GPIO in Arduino IDE
 
 
+## Console Log 1 (clang stdout)
+
+This uses the zero-buf branch of samblenny/wfx-fullMAC-driver at commit
+[54842b4](https://github.com/samblenny/wfx-fullMAC-driver/commit/54842b4931d10a7119db337ba30ed2ff5dd6d959)
+
+See [console_log_1.txt](console_log_1.txt)
+
+
 ## PDS File Setup
 
 The purpose of a PDS file is to configure the WF200 radio and GPIO. For the

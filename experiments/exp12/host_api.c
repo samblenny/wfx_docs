@@ -26,23 +26,25 @@ void sl_wfx_host_log(const char *string, ...)
 #endif
 
 /*
- * Static variables for host_api implementation with simulated hardware
+ * Static variables for host_api implementation with simulated hardware.
+ * These are used by the sl_wfx_host_wait_for_confirmation() host api
+ * implementation (see below) to fake responses from the WF200 firmware.
  */
 
-// _startup_info:
-// 1. Is used by sl_wfx_host_wait_for_confirmation() to fake the event payload
-//    for SL_WFX_STARTUP_IND_ID.
-// 2. TODO: get rid of this and change sl_wfx_host_wait_for_confirmation() to
-//    get events from the queue for sl_wfx_host_post_event()
+// _startup_info is for faking a SL_WFX_STARTUP_IND_ID reply
 static sl_wfx_startup_ind_t _startup_info;
-
 // _configuration_reply is used by sl_wfx_send_configuration()
 static sl_wfx_configuration_cnf_t _configuration_reply;
+// _shutdown_reply is used by sl_wfx_shutdown()
+static sl_wfx_shut_down_req_t _shutdown_reply;
 
 // Memory pool for host_allocate_buffer
 #define ALLOC_POOL_SIZE 1024
 static uint8_t _alloc_pool[ALLOC_POOL_SIZE];
+static uint8_t *_alloc_last_ptr = NULL;
+static uint32_t _alloc_last = 0;
 static uint32_t _alloc_next = 0;
+static uint32_t _alloc_highwater_mark = 0;
 
 /*
  * sl_wfx_* API function implementations
@@ -141,9 +143,14 @@ sl_status_t sl_wfx_host_get_pds_size(uint16_t *pds_size)
     return SL_STATUS_OK;
 }
 
+/*
+ * NOTE: This is sorta tricky as it only gets called as part of the error
+ * handler for sl_wfx_init(). You might expect it would get called as part of
+ * sl_wfx_deinit(), but you'd be wrong. For that, try sl_wfx_host_deinit_bus().
+ */
 sl_status_t sl_wfx_host_deinit(void)
 {
-    dbg("deinit\n");
+    dbg("deinit() -> OK\n");
     return SL_STATUS_OK;
 }
 
@@ -208,13 +215,15 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
         _startup_info.body.firmware_build = 3;
         _startup_info.body.firmware_major = 12;
         _startup_info.body.firmware_minor = 2;
-        _startup_info.body.num_inp_ch_bufs = 6;
+        _startup_info.body.num_inp_ch_bufs = 7;
+        _startup_info.header.id = SL_WFX_STARTUP_IND_ID;
         *event_payload_out = &_startup_info;
         return SL_STATUS_OK;
     case SL_WFX_CONFIGURATION_REQ_ID:
         dbg("OK(CONFIGURATION_REQ_ID)\n");
         memset(&_configuration_reply, 0, sizeof(sl_wfx_configuration_cnf_t));
         _configuration_reply.body.status = SL_STATUS_OK;
+        _configuration_reply.header.id = SL_WFX_CONFIGURATION_REQ_ID;
         *event_payload_out = &_configuration_reply;
         return SL_STATUS_OK;
     case SL_WFX_CONTROL_GPIO_REQ_ID:
@@ -237,7 +246,10 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
         break;
     case SL_WFX_SHUT_DOWN_REQ_ID:
         dbg("SHUT_DOWN_REQ_ID ");
-        break;
+        memset(&_shutdown_reply, 0, sizeof(sl_wfx_shut_down_req_t));
+        _shutdown_reply.id = SL_WFX_SHUT_DOWN_REQ_ID;
+        *event_payload_out = &_configuration_reply;
+        return SL_STATUS_OK;
     default:
         dbg("FAIL(unknown confirmation_id)\n");
         return SL_STATUS_FAIL;
@@ -266,7 +278,7 @@ sl_status_t sl_wfx_host_allocate_buffer(
     sl_wfx_buffer_type_t type,
     uint32_t buffer_size)
 {
-    dbg("allocate_buffer");
+    dbg("alloc");
     if(buffer == NULL) {
         dbg(": buffer == NULL\n");
         return SL_STATUS_FAIL;
@@ -291,9 +303,17 @@ sl_status_t sl_wfx_host_allocate_buffer(
     // Allocate a chunk of the pool
     if(_alloc_next + buffer_size < ALLOC_POOL_SIZE) {
         *buffer = &_alloc_pool[_alloc_next];
-        dbg("OK(*buffer=&_alloc_pool[");
+        // Save pointer and index in case buffer is freed before next alloc
+        _alloc_last_ptr = *buffer;
+        _alloc_last = _alloc_next;
+        dbg("OK(*buffer=&pool[");
         dbg_u32(_alloc_next);
+        // Calculate index to start of next allocatable block of pool
         _alloc_next += buffer_size;
+        // Calculate high-water mark (index of highest allocated byte of pool)
+        if(_alloc_next > 0 && _alloc_next > _alloc_highwater_mark+1) {
+            _alloc_highwater_mark = _alloc_next - 1;
+        }
         dbg("])\n");
         return SL_STATUS_OK;
     } else {
@@ -305,8 +325,36 @@ sl_status_t sl_wfx_host_allocate_buffer(
 // Free a buffer (currently a NOP)
 sl_status_t sl_wfx_host_free_buffer(void *buffer, sl_wfx_buffer_type_t type)
 {
-    dbg("free_buffer() -> OK\n");
-    // TODO: improve upon just allowing buffer to leak
+    dbg("free(*buffer:");
+    if(buffer == NULL) {
+        dbg(" NULL) -> FAIL\n");
+        return SL_STATUS_FAIL;
+    }
+    if(_alloc_last_ptr == NULL || _alloc_last < 0 || _alloc_last >= ALLOC_POOL_SIZE) {
+        // Fail for illegal values of _alloc_last_ptr or _alloc_last
+        dbg(" ?) -> FAIL(last_ptr-&pool: ");
+        dbg_u32(_alloc_last_ptr-_alloc_pool);
+        dbg(", last: ");
+        dbg_u32(_alloc_last);
+        dbg(")\n");
+        return SL_STATUS_FAIL;
+    }
+    if(buffer == _alloc_last_ptr) {
+        // For free() of last alloc(), zero the buffer and return it to pool
+        uint32_t size = _alloc_next - _alloc_last;
+        memset((void*)_alloc_last_ptr, 0, size);
+        // Adjust start of next available block of the pool, intentionally
+        // allowing _alloc_last to keep a now invalid value (see next comment)
+        _alloc_next = _alloc_last;
+        // Setting _alloc_last_ptr = NULL guards against double-free
+        _alloc_last_ptr = NULL;
+        dbg(" ==last) -> OK(next: pool[");
+    } else {
+        // Otherwise, allow buffer to leak
+        dbg(" !=last) -> OK(leaking, next: pool[");
+    }
+    dbg_u32(_alloc_next);
+    dbg("])\n");
     return SL_STATUS_OK;
 }
 
@@ -339,7 +387,9 @@ sl_status_t sl_wfx_host_init_bus(void)
 
 sl_status_t sl_wfx_host_deinit_bus(void)
 {
-    dbg("deinit_bus\n");
+    dbg("deinit_bus() -> OK(_alloc_highwater_mark: ");
+    dbg_u32(_alloc_highwater_mark);
+    dbg(")\n");
     return SL_STATUS_OK;
 }
 
