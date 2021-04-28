@@ -1,12 +1,12 @@
-# exp09
+# exp11
 
-Objectives:
+[**Update**: Never mind. This is incomplete and I don't intend to finish it.]
 
-1. Convert Arduino build/flash/run from IDE button to Makefile
+~~Objectives:~~
 
-2. Split compilation so firmware image and PDS go in their own object files
+1. ~~Split compilation so firmware image and PDS go in their own object files~~
 
-3. Add Makefile target to calculate sizes of object files
+2. ~~Add Makefile target to calculate sizes of object files~~
 
 
 ## clang-9 rv32i* test
