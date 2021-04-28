@@ -19,7 +19,9 @@ void setup() {
   sl_status_t status;
   Serial.begin(115200);
   while (!Serial) {;}
+  remember_context_ptr(&context);
   status = sl_wfx_init(&context);
+  status = sl_wfx_deinit();
 }
 
 void loop() {

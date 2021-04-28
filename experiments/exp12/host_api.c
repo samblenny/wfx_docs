@@ -37,6 +37,8 @@ static sl_wfx_startup_ind_t _startup_info;
 static sl_wfx_configuration_cnf_t _configuration_reply;
 // _shutdown_reply is used by sl_wfx_shutdown()
 static sl_wfx_shut_down_req_t _shutdown_reply;
+// _fake_packets is for sl_wfx_receive_frame() and sl_wfx_host_wait_for_confirmation()
+static uint32_t _fake_packets = 0;
 
 // Memory pool for host_allocate_buffer
 #define ALLOC_POOL_SIZE 1024
@@ -45,6 +47,17 @@ static uint8_t *_alloc_last_ptr = NULL;
 static uint32_t _alloc_last = 0;
 static uint32_t _alloc_next = 0;
 static uint32_t _alloc_highwater_mark = 0;
+
+// Driver context
+sl_wfx_context_t *_context_ptr = NULL;
+
+/*
+ * Non-wfx_host_api functions to help with debug tracing
+ */
+
+void remember_context_ptr(sl_wfx_context_t *context) {
+    _context_ptr = context;
+}
 
 /*
  * sl_wfx_* API function implementations
@@ -194,6 +207,8 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
     uint32_t timeout_ms,
     void **event_payload_out)
 {
+    sl_status_t status;
+    uint16_t ctrl_reg;
     // TODO: The real event payload should come from the queue for events from
     //   sl_wfx_host_post_event().
     //   Use *event_payload_out = sl_wfx_context->event_payload_buffer
@@ -225,6 +240,10 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
         _configuration_reply.body.status = SL_STATUS_OK;
         _configuration_reply.header.id = SL_WFX_CONFIGURATION_REQ_ID;
         *event_payload_out = &_configuration_reply;
+        // Prepare to fake a received frame. sl_wfx_receive_frame wants to see
+        // TODO: what does it want to see?
+        _fake_packets++;
+        status = sl_wfx_receive_frame(&ctrl_reg);
         return SL_STATUS_OK;
     case SL_WFX_CONTROL_GPIO_REQ_ID:
         dbg("CONTROL_GPIO_REQ_ID ");
@@ -322,7 +341,7 @@ sl_status_t sl_wfx_host_allocate_buffer(
     }
 }
 
-// Free a buffer (currently a NOP)
+// Free a buffer
 sl_status_t sl_wfx_host_free_buffer(void *buffer, sl_wfx_buffer_type_t type)
 {
     dbg("free(*buffer:");
@@ -389,6 +408,12 @@ sl_status_t sl_wfx_host_deinit_bus(void)
 {
     dbg("deinit_bus() -> OK(_alloc_highwater_mark: ");
     dbg_u32(_alloc_highwater_mark);
+    dbg(", context->used_buffers: ");
+    if(_context_ptr == NULL) {
+        dbg("NULL");
+    } else {
+        dbg_u16(_context_ptr->used_buffers);
+    }
     dbg(")\n");
     return SL_STATUS_OK;
 }
