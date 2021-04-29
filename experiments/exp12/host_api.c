@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include "sl_wfx.h"
 #include "dbg.h"
+#include "m4_spi.h"
 /*
  * Declare WF200 Firmware & BRD8022A PDS table to be linked against ROM
  */
@@ -68,6 +69,7 @@ sl_status_t sl_wfx_host_init(void)
     dbg("init\n");
     memset(_alloc_pool, 0, ALLOC_POOL_SIZE);
     _alloc_next = 0;
+    m4_init();
     return SL_STATUS_OK;
 }
 
@@ -164,18 +166,23 @@ sl_status_t sl_wfx_host_get_pds_size(uint16_t *pds_size)
 sl_status_t sl_wfx_host_deinit(void)
 {
     dbg("deinit() -> OK\n");
+    m4_deinit();
     return SL_STATUS_OK;
 }
 
 sl_status_t sl_wfx_host_reset_chip(void)
 {
     dbg("reset_chip\n");
+    m4_reset_chip();
     return SL_STATUS_OK;
 }
 
 sl_status_t sl_wfx_host_set_wake_up_pin(uint8_t state)
 {
-    dbg("set_wake_up_pin\n");
+    dbg("set_wake_up_pin(state:");
+    dbg_u8(state);
+    dbg(") -> OK\n");
+    m4_set_wup(state);
     return SL_STATUS_OK;
 }
 
@@ -282,6 +289,7 @@ sl_status_t sl_wfx_host_wait(uint32_t wait_ms)
     dbg("wait ");
     dbg_u32(wait_ms);
     dbg("ms\n");
+    m4_wait(wait_ms);
     return SL_STATUS_OK;
 }
 
@@ -383,6 +391,7 @@ sl_status_t sl_wfx_host_transmit_frame(void *frame, uint32_t frame_len)
     dbg("transmit_frame(*frame:..., frame_len:");
     dbg_u32(frame_len);
     dbg(") -> OK\n");
+    m4_tx_frame(frame, frame_len);
     return SL_STATUS_OK;
 }
 
@@ -401,6 +410,7 @@ sl_status_t sl_wfx_host_unlock(void)
 sl_status_t sl_wfx_host_init_bus(void)
 {
     dbg("init_bus\n");
+    m4_init_bus();
     return SL_STATUS_OK;
 }
 
@@ -415,18 +425,21 @@ sl_status_t sl_wfx_host_deinit_bus(void)
         dbg_u16(_context_ptr->used_buffers);
     }
     dbg(")\n");
+    m4_deinit_bus();
     return SL_STATUS_OK;
 }
 
 sl_status_t sl_wfx_host_enable_platform_interrupt(void)
 {
     dbg("irq=on\n");
+    m4_enable_interrupt();
     return SL_STATUS_OK;
 }
 
 sl_status_t sl_wfx_host_disable_platform_interrupt(void)
 {
     dbg("irq=off\n");
+    m4_disable_interrupt();
     return SL_STATUS_OK;
 }
 

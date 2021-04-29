@@ -23,9 +23,10 @@ NO_LINK=-c
 CC_OPT=-Os
 
 CC=clang $(CLANG_WARN) $(CLANG_IGNORE) $(CC_OPT) $(DEBUG)
+MAIN_C=host_api.c dbg.cpp m4_spi.cpp main.c
 
 all: main.c rom.o
-	$(CC) -I $(WFX_DRV) $(WFX_DRV_C) -I $(WFX_TOOLS) rom.o host_api.c dbg.cpp main.c
+	$(CC) -I $(WFX_DRV) $(WFX_DRV_C) -I $(WFX_TOOLS) rom.o $(MAIN_C)
 
 rom.o: rom.c
 	$(CC) $(NO_LINK) -I $(WFX_DRV) -I $(WFX_TOOLS) -o rom.o rom.c
