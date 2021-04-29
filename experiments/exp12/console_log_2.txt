@@ -1,0 +1,116 @@
+HOST_STATE_OK_TO_JUMP    ) -> OK(0x174FC882)
+m4_spi_transfer: buffer:... buffer_len:2
+m4_spi_transfer: buffer:... buffer_len:4
+m4_cs_deassert: A5:CS_hiZ
+irq=on
+m4_enable_interrupt: nop?
+m4_cs_assert: A5:CS_oLo
+SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x00000400)
+m4_spi_transfer: buffer:... buffer_len:2
+m4_spi_transfer: buffer:... buffer_len:4
+m4_cs_deassert: A5:CS_hiZ
+m4_cs_assert: A5:CS_oLo
+SPI(0x0002, 0x04000001) -> W(Config_R=0x00010400               ) -> OK(0x00000400)
+m4_spi_transfer: buffer:... buffer_len:2
+m4_spi_transfer: buffer:... buffer_len:4
+m4_cs_deassert: A5:CS_hiZ
+m4_cs_assert: A5:CS_oLo
+SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x00000400)
+m4_spi_transfer: buffer:... buffer_len:2
+m4_spi_transfer: buffer:... buffer_len:4
+m4_cs_deassert: A5:CS_hiZ
+m4_cs_assert: A5:CS_oLo
+SPI(0x0002, 0x00000000) -> W(Config_R=0x00000000               ) -> OK(0x00000400)
+m4_spi_transfer: buffer:... buffer_len:2
+m4_spi_transfer: buffer:... buffer_len:4
+m4_cs_deassert: A5:CS_hiZ
+wait_for_confirmation(conf_id:225, timeout_ms:5000, ...) -> OK(SL_WFX_STARTUP_IND_ID)
+set_wake_up_pin(state:1) -> OK
+m4_set_wup: A3:WUP=(state>0?oHi:oLo)
+get_pds_size: 6 lines
+get_pds_data(*pds_data:..., index:0) -> OK(*pds_data-start=0)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:20) -> OK(*buffer=&pool[0])
+lock() -> OK
+setup_waited_event(event_id:9) -> OK
+transmit_frame(*frame:..., frame_len:20) -> OK
+m4_tx_frame: hw_SPI.?()
+unlock() -> OK
+wait_for_confirmation(conf_id:9, timeout_ms:5000, ...) -> OK(CONFIGURATION_REQ_ID)
+free(*buffer: ==last) -> OK(next: pool[0])
+get_pds_data(*pds_data:..., index:1) -> OK(*pds_data-start=14)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:324) -> OK(*buffer=&pool[0])
+lock() -> OK
+setup_waited_event(event_id:9) -> OK
+transmit_frame(*frame:..., frame_len:324) -> OK
+m4_tx_frame: hw_SPI.?()
+unlock() -> OK
+wait_for_confirmation(conf_id:9, timeout_ms:5000, ...) -> OK(CONFIGURATION_REQ_ID)
+free(*buffer: ==last) -> OK(next: pool[0])
+get_pds_data(*pds_data:..., index:2) -> OK(*pds_data-start=332)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:64) -> OK(*buffer=&pool[0])
+lock() -> OK
+setup_waited_event(event_id:9) -> OK
+transmit_frame(*frame:..., frame_len:64) -> OK
+m4_tx_frame: hw_SPI.?()
+unlock() -> OK
+wait_for_confirmation(conf_id:9, timeout_ms:5000, ...) -> OK(CONFIGURATION_REQ_ID)
+free(*buffer: ==last) -> OK(next: pool[0])
+get_pds_data(*pds_data:..., index:3) -> OK(*pds_data-start=390)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:38) -> OK(*buffer=&pool[0])
+lock() -> OK
+setup_waited_event(event_id:9) -> OK
+transmit_frame(*frame:..., frame_len:38) -> OK
+m4_tx_frame: hw_SPI.?()
+unlock() -> OK
+wait_for_confirmation(conf_id:9, timeout_ms:5000, ...) -> OK(CONFIGURATION_REQ_ID)
+free(*buffer: ==last) -> OK(next: pool[0])
+get_pds_data(*pds_data:..., index:4) -> OK(*pds_data-start=422)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:194) -> OK(*buffer=&pool[0])
+lock() -> OK
+setup_waited_event(event_id:9) -> OK
+transmit_frame(*frame:..., frame_len:194) -> OK
+m4_tx_frame: hw_SPI.?()
+unlock() -> OK
+wait_for_confirmation(conf_id:9, timeout_ms:5000, ...) -> OK(CONFIGURATION_REQ_ID)
+free(*buffer: ==last) -> OK(next: pool[0])
+get_pds_data(*pds_data:..., index:5) -> OK(*pds_data-start=611)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:20) -> OK(*buffer=&pool[0])
+lock() -> OK
+setup_waited_event(event_id:9) -> OK
+transmit_frame(*frame:..., frame_len:20) -> OK
+m4_tx_frame: hw_SPI.?()
+unlock() -> OK
+wait_for_confirmation(conf_id:9, timeout_ms:5000, ...) -> OK(CONFIGURATION_REQ_ID)
+free(*buffer: ==last) -> OK(next: pool[0])
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:4) -> OK(*buffer=&pool[0])
+lock() -> OK
+transmit_frame(*frame:..., frame_len:4) -> OK
+m4_tx_frame: hw_SPI.?()
+unlock() -> OK
+m4_cs_assert: A5:CS_oLo
+SPI(0x9002, 0x00000000) -> R(ControlR                          ) -> OK(0x00002000)
+m4_spi_transfer: buffer:... buffer_len:2
+m4_spi_transfer: buffer:... buffer_len:4
+m4_cs_deassert: A5:CS_hiZ
+m4_cs_assert: A5:CS_oLo
+SPI(0x1002, 0x00200000) -> W(ControlR=0x00002000               ) -> OK(0x00002000)
+m4_spi_transfer: buffer:... buffer_len:2
+m4_spi_transfer: buffer:... buffer_len:4
+m4_cs_deassert: A5:CS_hiZ
+set_wake_up_pin(state:0) -> OK
+m4_set_wup: A3:WUP=(state>0?oHi:oLo)
+free(*buffer: ==last) -> OK(next: pool[0])
+m4_cs_assert: A5:CS_oLo
+SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x00000400)
+m4_spi_transfer: buffer:... buffer_len:2
+m4_spi_transfer: buffer:... buffer_len:4
+m4_cs_deassert: A5:CS_hiZ
+m4_cs_assert: A5:CS_oLo
+SPI(0x0002, 0x04000000) -> W(Config_R=0x00000400               ) -> OK(0x00000400)
+m4_spi_transfer: buffer:... buffer_len:2
+m4_spi_transfer: buffer:... buffer_len:4
+m4_cs_deassert: A5:CS_hiZ
+irq=off
+m4_disable_interrupt: nop?
+deinit_bus() -> OK(_alloc_highwater_mark: 323, context->used_buffers: 7)
+m4_deinit_bus: A5:CS_hiZ hw_SPI_off(SCK MOSI MISO)

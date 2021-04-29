@@ -1,0 +1,80 @@
+1,3d0
+< --Bus initialized--
+< --Chip initialized--
+< --Bootloader running--
+5c2,4
+< --Firmware downloaded--
+---
+> m4_spi_transfer: buffer:... buffer_len:2
+> m4_spi_transfer: buffer:... buffer_len:4
+> m4_cs_deassert: A5:CS_hiZ
+6a6,7
+> m4_enable_interrupt: nop?
+> m4_cs_assert: A5:CS_oLo
+7a9,12
+> m4_spi_transfer: buffer:... buffer_len:2
+> m4_spi_transfer: buffer:... buffer_len:4
+> m4_cs_deassert: A5:CS_hiZ
+> m4_cs_assert: A5:CS_oLo
+8a14,17
+> m4_spi_transfer: buffer:... buffer_len:2
+> m4_spi_transfer: buffer:... buffer_len:4
+> m4_cs_deassert: A5:CS_hiZ
+> m4_cs_assert: A5:CS_oLo
+9a19,22
+> m4_spi_transfer: buffer:... buffer_len:2
+> m4_spi_transfer: buffer:... buffer_len:4
+> m4_cs_deassert: A5:CS_hiZ
+> m4_cs_assert: A5:CS_oLo
+11c24,26
+< --Message mode set--
+---
+> m4_spi_transfer: buffer:... buffer_len:2
+> m4_spi_transfer: buffer:... buffer_len:4
+> m4_cs_deassert: A5:CS_hiZ
+13a29
+> m4_set_wup: A3:WUP=(state>0?oHi:oLo)
+19a36
+> m4_tx_frame: hw_SPI.?()
+27a45
+> m4_tx_frame: hw_SPI.?()
+35a54
+> m4_tx_frame: hw_SPI.?()
+43a63
+> m4_tx_frame: hw_SPI.?()
+51a72
+> m4_tx_frame: hw_SPI.?()
+59a81
+> m4_tx_frame: hw_SPI.?()
+63d84
+< --PDS configured--
+66a88
+> m4_tx_frame: hw_SPI.?()
+67a90
+> m4_cs_assert: A5:CS_oLo
+68a92,95
+> m4_spi_transfer: buffer:... buffer_len:2
+> m4_spi_transfer: buffer:... buffer_len:4
+> m4_cs_deassert: A5:CS_hiZ
+> m4_cs_assert: A5:CS_oLo
+69a97,99
+> m4_spi_transfer: buffer:... buffer_len:2
+> m4_spi_transfer: buffer:... buffer_len:4
+> m4_cs_deassert: A5:CS_hiZ
+70a101
+> m4_set_wup: A3:WUP=(state>0?oHi:oLo)
+71a103
+> m4_cs_assert: A5:CS_oLo
+72a105,108
+> m4_spi_transfer: buffer:... buffer_len:2
+> m4_spi_transfer: buffer:... buffer_len:4
+> m4_cs_deassert: A5:CS_hiZ
+> m4_cs_assert: A5:CS_oLo
+73a110,112
+> m4_spi_transfer: buffer:... buffer_len:2
+> m4_spi_transfer: buffer:... buffer_len:4
+> m4_cs_deassert: A5:CS_hiZ
+74a114
+> m4_disable_interrupt: nop?
+75a116
+> m4_deinit_bus: A5:CS_hiZ hw_SPI_off(SCK MOSI MISO)
