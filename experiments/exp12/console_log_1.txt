@@ -10,7 +10,7 @@ SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x0000040
 SPI(0x0002, 0x00000000) -> W(Config_R=0x00000000               ) -> OK(0x00000400)
 --Message mode set--
 wait_for_confirmation(conf_id:225, timeout_ms:5000, ...) -> OK(SL_WFX_STARTUP_IND_ID)
-set_wake_up_pin
+set_wake_up_pin(state:1) -> OK
 get_pds_size: 6 lines
 get_pds_data(*pds_data:..., index:0) -> OK(*pds_data-start=0)
 alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:20) -> OK(*buffer=&pool[0])
@@ -67,9 +67,9 @@ transmit_frame(*frame:..., frame_len:4) -> OK
 unlock() -> OK
 SPI(0x9002, 0x00000000) -> R(ControlR                          ) -> OK(0x00002000)
 SPI(0x1002, 0x00200000) -> W(ControlR=0x00002000               ) -> OK(0x00002000)
-set_wake_up_pin
+set_wake_up_pin(state:0) -> OK
 free(*buffer: ==last) -> OK(next: pool[0])
 SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x00000400)
 SPI(0x0002, 0x04000000) -> W(Config_R=0x00000400               ) -> OK(0x00000400)
 irq=off
-deinit_bus() -> OK(_alloc_highwater_mark: 323)
+deinit_bus() -> OK(_alloc_highwater_mark: 323, context->used_buffers: 7)

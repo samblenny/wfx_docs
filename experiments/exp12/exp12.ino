@@ -11,6 +11,8 @@
 
 #include "sl_wfx.h"
 
+extern "C" void remember_context_ptr(sl_wfx_context_t *);
+
 extern "C" {
   sl_wfx_context_t context;
 }

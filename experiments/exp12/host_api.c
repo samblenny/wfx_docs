@@ -250,7 +250,10 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
         // Prepare to fake a received frame. sl_wfx_receive_frame wants to see
         // TODO: what does it want to see?
         _fake_packets++;
-        status = sl_wfx_receive_frame(&ctrl_reg);
+        status = SL_STATUS_OK;
+        ctrl_reg = 0;
+        // TODO: fix this to not result in SL_STATUS_WIFI_NO_PACKET_TO_RECEIVE
+        //status = sl_wfx_receive_frame(&ctrl_reg);
         return SL_STATUS_OK;
     case SL_WFX_CONTROL_GPIO_REQ_ID:
         dbg("CONTROL_GPIO_REQ_ID ");
@@ -445,14 +448,13 @@ sl_status_t sl_wfx_host_disable_platform_interrupt(void)
 
 sl_status_t sl_wfx_host_spi_cs_assert(void)
 {
-    // dbg("cs ");
+    m4_cs_assert();
     return SL_STATUS_OK;
 }
 
 sl_status_t sl_wfx_host_spi_cs_deassert(void)
 {
-    // dbg("CS\n");
-    dbg("\n");
+    m4_cs_deassert();
     return SL_STATUS_OK;
 }
 
@@ -615,7 +617,9 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
         dbg("OK(");
         if(cmd_rw == 'R') { dbg_decode_u32(buf, 10); }
         else              { dbg_hex32(buf); }
-        dbg(") ");
+        dbg(")\n");
     }
+    m4_spi_transfer(header, header_length);
+    m4_spi_transfer(buffer, buffer_length);
     return SL_STATUS_OK;
 }

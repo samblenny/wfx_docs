@@ -20,6 +20,7 @@ void m4_enable_interrupt();
 void m4_disable_interrupt();
 void m4_cs_assert();
 void m4_cs_deassert();
+void m4_spi_transfer(uint8_t *buffer, uint32_t buffer_len);
 
 #ifdef __cplusplus
 }
