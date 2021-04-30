@@ -61,7 +61,8 @@ void m4_spi_transfer(
 #define M4_PIN_MOSI MOSI
 #define M4_PIN_MISO MISO
 
-Adafruit_SPIDevice _af_spi = Adafruit_SPIDevice(M4_PIN_FAKE_CS);
+#define SPI_CLOCK_HZ 5000000
+Adafruit_SPIDevice _af_spi = Adafruit_SPIDevice(M4_PIN_FAKE_CS, SPI_CLOCK_HZ);
 bool _af_spi_valid = false;
 
 void m4_init() {
@@ -81,7 +82,8 @@ void m4_deinit() {
 void m4_init_bus() {
     dbg("m4_init_bus: A5:CS_oHi hw_SPI(SCK MOSI MISO)\n");
     digitalWrite(M4_PIN_CS, HIGH); // 1. CS: hiZ -> pullup
-    pinMode(M4_PIN_CS, OUTPUT);    // 2. CS: pullup -> drive high
+    pinMode(M4_PIN_CS, OUTPUT);    // 2. CS: pullup -> output
+    digitalWrite(M4_PIN_CS, HIGH); // 3. CS: drive high
     if(!_af_spi.begin()) {
         dbg("m4_init_bus: _af_spi.begin() FAILED (this is probably a bug)\n");
         _af_spi_valid = false;
