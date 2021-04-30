@@ -33,16 +33,17 @@ void dbg_hex32(uint32_t val) { if(!DBG_MUTE) { printf("0x%08X", val); } }
  */
 #include "Arduino.h"
 
-void dbg(const char *str)  { if(!DBG_MUTE) { Serial.print(str);      } }
-void dbg_c(char c)         { if(!DBG_MUTE) { Serial.print(c);        } }
-void dbg_u8(uint8_t val)   { if(!DBG_MUTE) { Serial.print(val, DEC); } }
-void dbg_u16(uint16_t val) { if(!DBG_MUTE) { Serial.print(val, DEC); } }
-void dbg_u32(uint32_t val) { if(!DBG_MUTE) { Serial.print(val, DEC); } }
+void dbg(const char *str)  { if(!DBG_MUTE) { Serial.print(str);      Serial.flush(); } }
+void dbg_c(char c)         { if(!DBG_MUTE) { Serial.print(c);        Serial.flush(); } }
+void dbg_u8(uint8_t val)   { if(!DBG_MUTE) { Serial.print(val, DEC); Serial.flush(); } }
+void dbg_u16(uint16_t val) { if(!DBG_MUTE) { Serial.print(val, DEC); Serial.flush(); } }
+void dbg_u32(uint32_t val) { if(!DBG_MUTE) { Serial.print(val, DEC); Serial.flush(); } }
 
 void dbg_hex8(uint8_t val) {
     if(DBG_MUTE) { return; }
     if (val < 0x10) { Serial.print("0"); }
     Serial.print(val, HEX);
+    Serial.flush();
 }
 
 void dbg_hex16(uint16_t val) {
@@ -51,6 +52,7 @@ void dbg_hex16(uint16_t val) {
     else if (val < 0x100)  { Serial.print("00"); }
     else if (val < 0x1000) { Serial.print("0"); }
     Serial.print(val, HEX);
+    Serial.flush();
 }
 
 void dbg_hex32(uint32_t val) {
@@ -64,6 +66,7 @@ void dbg_hex32(uint32_t val) {
     else if (val < 0x10000000) { Serial.print("0x0"); }
     else                       { Serial.print("0x"); }
     Serial.print(val, HEX);
+    Serial.flush();
 }
 
 #endif  // NOT_ARDUINO

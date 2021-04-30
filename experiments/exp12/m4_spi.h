@@ -2,6 +2,7 @@
 #define M4_SPI_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -20,7 +21,11 @@ void m4_enable_interrupt();
 void m4_disable_interrupt();
 void m4_cs_assert();
 void m4_cs_deassert();
-void m4_spi_transfer(uint8_t *buffer, uint32_t buffer_len);
+void m4_spi_transfer(
+    bool read,
+    uint8_t *header, uint32_t header_len,
+    uint8_t *buffer, uint32_t buffer_len
+);
 
 #ifdef __cplusplus
 }

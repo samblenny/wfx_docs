@@ -497,6 +497,22 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
     static uint32_t ctrl_area_put = 0;
     static bool download_complete = false;
 
+    // Do the hardware SPI transfer first so its results can be overriden
+    bool read;
+    if(type == SL_WFX_BUS_WRITE) {
+        read = false;
+    } else if(type == SL_WFX_BUS_READ) {
+        read = true;
+    } else {
+        // At the time I'm writing this, wfx-fullMAC-driver declares an
+        // SL_WFX_BUS_WRITE_AND_READ enum value that is not used by any driver
+        // code. That's good, because it would be difficult to implement
+        // efficiently with the hardware SPI peripheral.
+        dbg("SPI transfer -> FAIL(unsupported transfer type)\n");
+        return SL_STATUS_FAIL;
+    }
+    m4_spi_transfer(read, header, header_length, buffer, buffer_length);
+
     // Debug print the raw byte array arguments
     dbg("SPI(0x");
     for(int i=0; i < header_length; i++) {
@@ -619,7 +635,5 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
         else              { dbg_hex32(buf); }
         dbg(")\n");
     }
-    m4_spi_transfer(header, header_length);
-    m4_spi_transfer(buffer, buffer_length);
     return SL_STATUS_OK;
 }
