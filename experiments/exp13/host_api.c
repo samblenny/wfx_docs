@@ -391,13 +391,19 @@ sl_status_t sl_wfx_host_free_buffer(void *buffer, sl_wfx_buffer_type_t type)
 // Transmit frame
 sl_status_t sl_wfx_host_transmit_frame(void *frame, uint32_t frame_len)
 {
-    dbg("transmit_frame(*frame:..., frame_len:");
+    dbg("tx_frame(*frame:..., frame_len:");
     dbg_u32(frame_len);
-    dbg(") -> OK\n");
-    m4_cs_assert();
-    m4_tx_frame(frame, frame_len);
-    m4_cs_deassert();
-    return SL_STATUS_OK;
+    dbg(")...\n "); // End debug line so it doesn't mix with sl_wfx_data_write
+    sl_status_t status;
+    status = sl_wfx_data_write(frame, frame_len);
+    if(status == SL_STATUS_OK) {
+        dbg(" ...tx_frame -> OK\n");
+    } else {
+        dbg(" ...tx_frame -> FAIL(status:0x)");
+        dbg_hex32(status);
+        dbg("\n");
+    }
+    return status;
 }
 
 sl_status_t sl_wfx_host_lock(void)
@@ -632,10 +638,14 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
             pack_4xu8_mode2(buffer, buf);
         }
         // Debug print the NOT-packed output value of buffer
-        dbg("OK(");
+        dbg(" -> OK(");
         if(cmd_rw == 'R') { dbg_decode_u32(buf, 10); }
         else              { dbg_hex32(buf); }
         dbg(")\n");
+    } else {
+        // Since (header_length == 2 && buffer_length == 4) was false, this is
+        // not a ctrl/config register access. So, use simpler debug.
+        dbg("-> OK\n");
     }
     return SL_STATUS_OK;
 }
