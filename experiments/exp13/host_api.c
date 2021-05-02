@@ -394,7 +394,9 @@ sl_status_t sl_wfx_host_transmit_frame(void *frame, uint32_t frame_len)
     dbg("transmit_frame(*frame:..., frame_len:");
     dbg_u32(frame_len);
     dbg(") -> OK\n");
+    m4_cs_assert();
     m4_tx_frame(frame, frame_len);
+    m4_cs_deassert();
     return SL_STATUS_OK;
 }
 
