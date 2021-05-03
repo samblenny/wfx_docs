@@ -4,11 +4,14 @@ extern "C"
 #endif
 
 #include <stdint.h>
+#include <stdbool.h>
 
 /**
  * Debug helper functions for POSIX/Arduino portability
  */
 
+void dbg_serial_ok(bool allow_serial);
+void dbg_set_mute(bool mute);
 void dbg(const char *str);
 void dbg_w(const char *str, uint32_t width);
 void dbg_c(char c);

@@ -10,6 +10,8 @@
  */
 
 #include "sl_wfx.h"
+#include "dbg.h"
+#include "m4_spi.h"
 
 extern "C" void remember_context_ptr(sl_wfx_context_t *);
 
@@ -19,8 +21,24 @@ extern "C" {
 
 void setup() {
   sl_status_t status;
+  pinMode(M4_PIN_SCK, INPUT);
+  pinMode(M4_PIN_RESET, INPUT_PULLUP);
+  // Wait up to 3000ms for a USB serial monitor to connect
+  // (USB connect delays in range of 1100..2300ms are typical)
   Serial.begin(115200);
-  while (!Serial) {;}
+  bool allow_serial = true;
+  int i = 0;
+  for(i=0; i<300; i++) {
+    if(!Serial) {
+      delay(10);
+    } else {
+      allow_serial = true;
+      break;
+    }
+  }
+  dbg_serial_ok(allow_serial);
+  dbg_set_mute(true);
+  // Initialize the radio
   remember_context_ptr(&context);
   status = sl_wfx_init(&context);
   status = sl_wfx_deinit();

@@ -6,9 +6,9 @@ Objectives:
 
 2. Power WF200 eval board through INA190EVM current sense amplifier
 
-3. Trace WF200 eval board GPIO+SPI comms and current with Saleae
+3. Trace WF200 eval board current with Saleae (just reset pulse, no SPI yet)
 
-
+<!--
 ## Console Log 1 (clang stdout)
 
 This uses the zero-buf branch of samblenny/wfx-fullMAC-driver at commit
@@ -28,7 +28,7 @@ See [console_log_2_arduino.txt](console_log_2.txt)
 ## Console Log Diff
 
 See [console_log_diff.txt](console_log_diff.txt)
-
+-->
 
 ## PDS File Setup
 

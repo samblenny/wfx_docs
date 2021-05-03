@@ -7,16 +7,16 @@
 #include "dbg.h"
 #include "firmware/sl_wfx_registers.h"
 
+static bool DBG_SERIAL_OK = false;
 static bool DBG_MUTE = true;
 
-void dbg_set_mute(bool mute) {
-    DBG_MUTE = mute;
-}
+void dbg_serial_ok(bool allow_serial) { DBG_SERIAL_OK = allow_serial; }
 
 #ifdef NOT_ARDUINO
 /**
  * For building with make, send debug to stdout with printf.
  */
+void dbg_set_mute(bool mute) { DBG_MUTE = mute; }
 void dbg(const char *str)    { if(!DBG_MUTE) { printf("%s", str);     } }
 void dbg_c(char c)           { if(!DBG_MUTE) { printf("%c", c);       } }
 void dbg_u8(uint8_t val)     { if(!DBG_MUTE) { printf("%u", val);     } }
@@ -32,6 +32,11 @@ void dbg_hex32(uint32_t val) { if(!DBG_MUTE) { printf("0x%08X", val); } }
  * For building with the Arduino IDE, send debug to serial port.
  */
 #include "Arduino.h"
+
+void dbg_set_mute(bool mute) {
+    // When serial port is disconnected, debug must stay muted. Otherwise, allow selection.
+    DBG_MUTE = DBG_SERIAL_OK ? mute : true;
+}
 
 void dbg(const char *str)  { if(!DBG_MUTE) { Serial.print(str);      Serial.flush(); } }
 void dbg_c(char c)         { if(!DBG_MUTE) { Serial.print(c);        Serial.flush(); } }

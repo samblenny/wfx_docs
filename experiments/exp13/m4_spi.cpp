@@ -53,18 +53,9 @@ void m4_spi_transfer(
  */
 #include "Arduino.h"
 #include <Adafruit_SPIDevice.h>
+#include <typeinfo>
 
-#define M4_PIN_RESET A2
-#define M4_PIN_WUP A3
-#define M4_PIN_WIRQ A4
-#define M4_PIN_CS A5
-#define M4_PIN_FAKE_CS 13
-#define M4_PIN_SCK SCK
-#define M4_PIN_MOSI MOSI
-#define M4_PIN_MISO MISO
-
-#define SPI_CLOCK_HZ 5000000
-Adafruit_SPIDevice _af_spi = Adafruit_SPIDevice(M4_PIN_FAKE_CS, SPI_CLOCK_HZ);
+Adafruit_SPIDevice *_af_spi = NULL;
 bool _af_spi_valid = false;
 
 void m4_init() {
@@ -83,10 +74,13 @@ void m4_deinit() {
 
 void m4_init_bus() {
     dbg("m4_init_bus -> ");
+    if(_af_spi == NULL) {
+        _af_spi = new Adafruit_SPIDevice(M4_PIN_FAKE_CS, M4_SPI_CLOCK_HZ);
+    }
     digitalWrite(M4_PIN_CS, HIGH); // 1. CS: hiZ -> pullup
     pinMode(M4_PIN_CS, OUTPUT);    // 2. CS: pullup -> output
     digitalWrite(M4_PIN_CS, HIGH); // 3. CS: drive high
-    if(!_af_spi.begin()) {
+    if(!_af_spi->begin()) {
         dbg("FAIL\n");
         _af_spi_valid = false;
     } else {
@@ -109,7 +103,7 @@ void m4_reset_chip() {
     dbg("m4_reset_chip\n");
     digitalWrite(M4_PIN_RESET, LOW);
     pinMode(M4_PIN_RESET, OUTPUT);
-    delay(1);
+    delay(2);
     pinMode(M4_PIN_RESET, INPUT);
     digitalWrite(M4_PIN_RESET, HIGH);
 }
@@ -134,7 +128,7 @@ void m4_tx_frame(void *frame, uint32_t frame_len) {
         dbg(" -> FAIL\n");
     } else {
         dbg(" -> OK\n");
-        _af_spi.write((uint8_t *)frame, frame_len);
+        _af_spi->write((uint8_t *)frame, frame_len);
     }
 }
 
@@ -173,11 +167,11 @@ void m4_spi_transfer(
         dbg(" -> FAIL\n");
     } else {
         const uint8_t send_val = 0;
-        _af_spi.write(header, header_len);
+        _af_spi->write(header, header_len);
         if(read) {
-            _af_spi.read((uint8_t*)buffer, buffer_len, send_val);
+            _af_spi->read((uint8_t*)buffer, buffer_len, send_val);
         } else {
-            _af_spi.write((uint8_t*)buffer, buffer_len);
+            _af_spi->write((uint8_t*)buffer, buffer_len);
         }
         dbg(" -> OK\n");
     }
