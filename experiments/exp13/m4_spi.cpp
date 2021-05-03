@@ -106,6 +106,7 @@ void m4_reset_chip() {
     delay(2);
     pinMode(M4_PIN_RESET, INPUT);
     digitalWrite(M4_PIN_RESET, HIGH);
+    delay(1);
 }
 
 void m4_set_wup(uint8_t state) {

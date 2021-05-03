@@ -13,7 +13,7 @@ extern "C"
 #define M4_PIN_WUP A3
 #define M4_PIN_WIRQ A4
 #define M4_PIN_CS A5
-#define M4_PIN_FAKE_CS 13
+#define M4_PIN_FAKE_CS 12
 #define M4_PIN_SCK SCK
 #define M4_PIN_MOSI MOSI
 #define M4_PIN_MISO MISO
