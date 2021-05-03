@@ -20,6 +20,7 @@ Logic 8 calibrated voltage quantization step size appears to about 1.35mV,
 corresponding to a current step size of 5.2µA (200 V/V gain across 0.130Ω).
 
 | INA190 Vout | gain    | R       | I (Vout/gain/R) | Comment                            |
+|-------------|---------|---------|-----------------|------------------------------------|
 | 0.031 V     | 200 V/V | 0.130 Ω | 1.19 mA         | SiLabs AN1219: 75 µA for reset low |
 | 0.143 V     | 200 V/V | 0.130 Ω | 5.50 mA         | SiLabs AN1219: 1.5 mA for snooze   |
 
