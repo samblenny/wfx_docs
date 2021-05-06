@@ -1,0 +1,15 @@
+HOST_STATE_OK_TO_JUMP    ) -> OK(0x174FC882)
+irq=on
+SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x02040600)
+SPI(0x0002, 0x06000205) -> W(Config_R=0x02050600               ) -> OK(0x02050600)
+SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x02050600)
+SPI(0x0002, 0x02000205) -> W(Config_R=0x02050200               ) -> OK(0x02050200)
+wait_for_confirmation(conf_id:225, timeout_ms:5000, ...) -> FAIL(unimplemented)
+SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x02050200)
+SPI(0x0002, 0x02000204) -> W(Config_R=0x02040200               ) -> OK(0x02040200)
+irq=off
+deinit_bus() -> OK(_alloc_highwater_mark: 0, context->used_buffers: 0)
+m4_deinit_bus
+m4_deinit
+deinit() -> OK
+m4_deinit
