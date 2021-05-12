@@ -4,7 +4,9 @@ Objectives:
 
 1. Get SPI working between Feather M4 and WF200 eval board
 
-2. Trace WF200 eval board current with Saleae during firmware & PDS upload
+2. Trace WF200 eval board current with Saleae during firmware upload
+
+3. Compare current sense capture for valid vs. invalid firmware blob
 
 
 ## Current Sense Captures
@@ -23,6 +25,7 @@ corresponding to a current step size of 5.2µA (200 V/V gain across 0.130Ω).
 | 0.127 V     | 200 V/V | 0.130 Ω |  4.88  mA       | Mid-reset                           |
 | 0.335 V     | 200 V/V | 0.130 Ω | 12.9   mA       | Firmware uploading                  |
 | 1.743 V     | 200 V/V | 0.130 Ω | 67.0   mA       | Peak after `HOST_STATUS_OK_TO_JUMP` |
+| 0.296 V     | 200 V/V | 0.130 Ω | 11.4   mA       | After invalid firmware upload       |
 
 
 ![capture_fw_load_wide.png](capture_fw_load_wide.png)
@@ -34,6 +37,18 @@ corresponding to a current step size of 5.2µA (200 V/V gain across 0.130Ω).
 ![capture_fw_load_335mV.png](capture_fw_load_335mV.png)
 
 ![capture_boot_peak_1743mV.png](capture_boot_peak_1743mV.png)
+
+
+## Capture of Uploading Invalid Firmware Blob
+
+This capture shows the error condition after uploading a firmware blob that I
+corrupted by flipping one bit a ways after the header. There's no code or
+console log to go with this, but the WF200 did not return a
+`HOST_STATUS_OK_TO_JUMP` status code at the end of the upload.
+
+![capture_bad_firmware_wide.png](capture_bad_firmware_wide.png)
+
+![capture_bad_firmware_tail.png](capture_bad_firmware_tail.png)
 
 
 ## Console Log (Arduino serial monitor)
