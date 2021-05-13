@@ -9,6 +9,37 @@ Objectives:
 3. Compare current sense capture for valid vs. invalid firmware blob
 
 
+## Test Circuit Wiring Guide
+
+```
+    Adafruit   Saleae   Silicon Laboratories   INA190EVM
+  Feather M4   Logic8   BRD8022A EXP header    current sense
+------------   ------   --------------------   -------------
+         GND     GND    1  GND                 GND
+          A2   0 blk    7  RESETn              --
+          A3   1 brn    3  GPIO_WUP            --
+          A4   2 red    12 SPI_WIRQ            --
+          A5   3 org    10 SPI_CS              --
+         SCK   4 yel    8  SPI_SCLK            --
+        MOSI   5 grn    4  SPI_MOSI            --
+        MISO   6 blu    6  SPI_MISO            --
+(fake CS) 12     --     --                     --
+   (5V)  USB     --     --                     VS  (INA190 Vs)
+         3V3     --     20 3V3                 IN+ (0.130Ω shunt)
+          --   7 vlt    2  VMCU                IN- (0.130Ω shunt)
+```
+
+Notes:
+1. BRD8022A WF200 eval board switches should be set for "EXP VMCU" and "SPI".
+2. BRD3022A needs 3.3V into both `3V3` and `VMCU`. `3V3` powers the GPIO mux
+   chips and part of the reset circuit. `VMCU` powers the WF200 chip and the
+   other part of the reset circuit.
+3. INA190EVM gets 5V to power the amplifier and 3.3V for the shunt resistor.
+4. Feather M4's fake CS pin (`12`) is because M4 hardware SPI peripheral insists
+   on doing 8-bit CS framing. WF200 expects 16-bit framing. Putting M4 8-bit CS
+   on `12` makes it harmless. Real 16-bit CS gets bit-banged on pin `A5`.
+
+
 ## Current Sense Captures
 
 Saleae Logic 8 captures of 200V/V gain INA190 high-side current sense amplifier

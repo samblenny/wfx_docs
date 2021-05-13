@@ -41,7 +41,7 @@ sl_status_t m4_spi_transfer(
  *          SCK   4 yel    8  SPI_SCLK            --
  *         MOSI   5 grn    4  SPI_MOSI            --
  *         MISO   6 blu    6  SPI_MISO            --
- * (fake CS) 13     --     --                     --
+ * (fake CS) 12     --     --                     --
  *    (5V)  USB     --     --                     VS  (INA190 Vs)
  *          3V3     --     20 3V3                 IN+ (0.130Ω shunt)
  *           --   7 vlt    2  VMCU                IN- (0.130Ω shunt)
