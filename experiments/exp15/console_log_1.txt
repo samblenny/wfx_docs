@@ -1,0 +1,158 @@
+HOST_STATE_OK_TO_JUMP    ) -> OK(0x174FC882)
+irq=on
+SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x02040600)
+SPI(0x0002, 0x06000205) -> W(Config_R=0x02050600               ) -> OK(0x02050600)
+SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x02050600)
+SPI(0x0002, 0x02000205) -> W(Config_R=0x02050200               ) -> OK(0x02050200)
+wait_for_confirmation(conf_id:225, timeout_ms:5000, ...) -> lock() -> OK
+SPI(0x9002, 0x00000000) -> R(ControlR                          ) -> OK(0x00007062)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:256) -> OK(*buffer=&pool[0])
+SPI(0xA063 <buffer_length:198 bytes>) -> OK
+post_event() -> OK(header.id: SL_WFX_STARTUP_IND_ID)
+free(*buffer: ==last) -> OK(next: pool[0])
+unlock() -> OK
+setup_waited_event(event_id:225) -> OK
+OK
+startup_ind:
+  status: 0x00000000
+  hardware_id: 1002
+  num_inp_ch_bufs: 30
+  size_inp_ch_buf: 1616
+  mac_addr[0]: --:--:--:--:--:--
+  mac_addr[0]: --:--:--:--:--:--
+  api_version_minor: 7
+  api_version_major: 3
+  firmware_build: 2
+  firmware_minor: 12
+  firmware_major: 3
+  firmware_type: 1
+set_wake_up_pin(state:1) -> OK
+get_pds_size: 6 lines
+get_pds_data(*pds_data:..., index:0) -> OK(*pds_data-start=0)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:20) -> OK(*buffer=&pool[0])
+lock() -> OK
+setup_waited_event(event_id:9) -> OK
+tx_frame(*frame:..., frame_len:20)...
+ SPI(0x200A, 0x140009000D007B613A7B613A342C623A307D7D00) -> OK
+ ...tx_frame -> OK
+unlock() -> OK
+wait_for_confirmation(conf_id:9, timeout_ms:5000, ...) -> lock() -> OK
+SPI(0x9002, 0x00000000) -> R(ControlR                          ) -> OK(0x00003004)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:64) -> OK(*buffer=&pool[20])
+SPI(0xA005, 0x00000000000000000000) -> OK
+post_event() -> OK(header.id: SL_WFX_CONFIGURATION_REQ_ID)
+free(*buffer: ==last) -> OK(next: pool[20])
+unlock() -> OK
+setup_waited_event(event_id:9) -> OK
+OK
+free(*buffer: ?) -> FAIL(last_ptr-&pool: 3758095044, last: 20)
+get_pds_data(*pds_data:..., index:1) -> OK(*pds_data-start=14)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:324) -> OK(*buffer=&pool[20])
+lock() -> OK
+setup_waited_event(event_id:9) -> OK
+tx_frame(*frame:..., frame_len:324)...
+ SPI(0x20A2 <buffer_length:324 bytes>) -> OK
+ ...tx_frame -> OK
+unlock() -> OK
+wait_for_confirmation(conf_id:9, timeout_ms:5000, ...) -> lock() -> OK
+SPI(0x9002, 0x00000000) -> R(ControlR                          ) -> OK(0x00003004)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:64) -> OK(*buffer=&pool[344])
+SPI(0xA005, 0x00000000000000000000) -> OK
+post_event() -> OK(header.id: SL_WFX_CONFIGURATION_REQ_ID)
+free(*buffer: ==last) -> OK(next: pool[344])
+unlock() -> OK
+setup_waited_event(event_id:9) -> OK
+OK
+free(*buffer: ?) -> FAIL(last_ptr-&pool: 3758095044, last: 344)
+get_pds_data(*pds_data:..., index:2) -> OK(*pds_data-start=332)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:64) -> OK(*buffer=&pool[344])
+lock() -> OK
+setup_waited_event(event_id:9) -> OK
+tx_frame(*frame:..., frame_len:64)...
+ SPI(0x2020 <buffer_length:64 bytes>) -> OK
+ ...tx_frame -> OK
+unlock() -> OK
+wait_for_confirmation(conf_id:9, timeout_ms:5000, ...) -> lock() -> OK
+SPI(0x9002, 0x00000000) -> R(ControlR                          ) -> OK(0x00003004)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:64) -> OK(*buffer=&pool[408])
+SPI(0xA005, 0x00000000000000000000) -> OK
+post_event() -> OK(header.id: SL_WFX_CONFIGURATION_REQ_ID)
+free(*buffer: ==last) -> OK(next: pool[408])
+unlock() -> OK
+setup_waited_event(event_id:9) -> OK
+OK
+free(*buffer: ?) -> FAIL(last_ptr-&pool: 3758095044, last: 408)
+get_pds_data(*pds_data:..., index:3) -> OK(*pds_data-start=390)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:38) -> OK(*buffer=&pool[408])
+lock() -> OK
+setup_waited_event(event_id:9) -> OK
+tx_frame(*frame:..., frame_len:38)...
+ SPI(0x2013 <buffer_length:38 bytes>) -> OK
+ ...tx_frame -> OK
+unlock() -> OK
+wait_for_confirmation(conf_id:9, timeout_ms:5000, ...) -> lock() -> OK
+SPI(0x9002, 0x00000000) -> R(ControlR                          ) -> OK(0x00003004)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:64) -> OK(*buffer=&pool[446])
+SPI(0xA005, 0x00000000000000000000) -> OK
+post_event() -> OK(header.id: SL_WFX_CONFIGURATION_REQ_ID)
+free(*buffer: ==last) -> OK(next: pool[446])
+unlock() -> OK
+setup_waited_event(event_id:9) -> OK
+OK
+free(*buffer: ?) -> FAIL(last_ptr-&pool: 3758095044, last: 446)
+get_pds_data(*pds_data:..., index:4) -> OK(*pds_data-start=422)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:194) -> OK(*buffer=&pool[446])
+lock() -> OK
+setup_waited_event(event_id:9) -> OK
+tx_frame(*frame:..., frame_len:194)...
+ SPI(0x2061 <buffer_length:194 bytes>) -> OK
+ ...tx_frame -> OK
+unlock() -> OK
+wait_for_confirmation(conf_id:9, timeout_ms:5000, ...) -> lock() -> OK
+SPI(0x9002, 0x00000000) -> R(ControlR                          ) -> OK(0x00003004)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:64) -> OK(*buffer=&pool[640])
+SPI(0xA005, 0x00000000000000000000) -> OK
+post_event() -> OK(header.id: SL_WFX_CONFIGURATION_REQ_ID)
+free(*buffer: ==last) -> OK(next: pool[640])
+unlock() -> OK
+setup_waited_event(event_id:9) -> OK
+OK
+free(*buffer: ?) -> FAIL(last_ptr-&pool: 3758095044, last: 640)
+get_pds_data(*pds_data:..., index:5) -> OK(*pds_data-start=611)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:20) -> OK(*buffer=&pool[640])
+lock() -> OK
+setup_waited_event(event_id:9) -> OK
+tx_frame(*frame:..., frame_len:20)...
+ SPI(0x200A, 0x140009000D007B6A3A7B613A302C623A307D7D00) -> OK
+ ...tx_frame -> OK
+unlock() -> OK
+wait_for_confirmation(conf_id:9, timeout_ms:5000, ...) -> lock() -> OK
+SPI(0x9002, 0x00000000) -> R(ControlR                          ) -> OK(0x00003004)
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:64) -> OK(*buffer=&pool[660])
+SPI(0xA005, 0x00000000000000000000) -> OK
+post_event() -> OK(header.id: SL_WFX_CONFIGURATION_REQ_ID)
+free(*buffer: ==last) -> OK(next: pool[660])
+unlock() -> OK
+setup_waited_event(event_id:9) -> OK
+OK
+free(*buffer: ?) -> FAIL(last_ptr-&pool: 3758095044, last: 660)
+============================================
+sl_wfx_init() -> OK, calling sl_wfx_deinit()
+============================================
+alloc(**bufer:..., type:CONTROL_BUFFER, buffer_size:4) -> OK(*buffer=&pool[660])
+lock() -> OK
+tx_frame(*frame:..., frame_len:4)...
+ SPI(0x2002, 0x04003200) -> W(IO_Queue=0x00320004               ) -> OK(0x00320004)
+ ...tx_frame -> OK
+unlock() -> OK
+SPI(0x9002, 0x00000000) -> R(ControlR                          ) -> OK(0x00003000)
+SPI(0x1002, 0x00200000) -> W(ControlR=0x00002000               ) -> OK(0x00002000)
+set_wake_up_pin(state:0) -> OK
+free(*buffer: ==last) -> OK(next: pool[660])
+SPI(0x8002, 0x00000000) -> R(Config_R                          ) -> OK(0x00000000)
+SPI(0x0002, 0x00000000) -> W(Config_R=0x00000000               ) -> OK(0x00000000)
+irq=off
+deinit_bus() -> OK(_alloc_highwater_mark: 723, context->used_buffers: 1)
+m4_deinit_bus
+m4_deinit
+
