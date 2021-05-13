@@ -44,7 +44,8 @@ sl_status_t m4_spi_transfer(
  * (fake CS) 12     --     --                     --
  *    (5V)  USB     --     --                     VS  (INA190 Vs)
  *          3V3     --     20 3V3                 IN+ (0.130Ω shunt)
- *           --   7 vlt    2  VMCU                IN- (0.130Ω shunt)
+ *           --     --     2  VMCU                IN- (0.130Ω shunt)
+ *           --   7 vlt    --                     OUT
  *
  * NOTE: The SPI code below uses Adafruit's busio library, so be sure to use the
  * Arduino IDE library manager (tools menu) to install Adafruit BusIO.

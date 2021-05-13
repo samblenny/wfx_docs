@@ -26,7 +26,8 @@ Objectives:
 (fake CS) 12     --     --                     --
    (5V)  USB     --     --                     VS  (INA190 Vs)
          3V3     --     20 3V3                 IN+ (0.130Ω shunt)
-          --   7 vlt    2  VMCU                IN- (0.130Ω shunt)
+          --     --     2  VMCU                IN- (0.130Ω shunt)
+          --   7 vlt    --                     OUT
 ```
 
 Notes:
@@ -34,7 +35,9 @@ Notes:
 2. BRD3022A needs 3.3V into both `3V3` and `VMCU`. `3V3` powers the GPIO mux
    chips and part of the reset circuit. `VMCU` powers the WF200 chip and the
    other part of the reset circuit.
-3. INA190EVM gets 5V to power the amplifier and 3.3V for the shunt resistor.
+3. INA190EVM is the 200 V/V gain variant (EVM kit comes with several boards) and
+   it needs 5V to power the amplifier and 3.3V for the shunt resistor. Jumpers
+   should be set for REF=GND and ENABLE=VS.
 4. Feather M4's fake CS pin (`12`) is because M4 hardware SPI peripheral insists
    on doing 8-bit CS framing. WF200 expects 16-bit framing. Putting M4 8-bit CS
    on `12` makes it harmless. Real 16-bit CS gets bit-banged on pin `A5`.
