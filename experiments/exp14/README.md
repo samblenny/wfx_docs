@@ -14,10 +14,9 @@ Objectives:
 Saleae Logic 8 captures of 200V/V gain INA190 high-side current sense amplifier
 inline with WF200 eval board VMCU.
 
-WF200 Eval board has five 78kΩ pull-ups on the data lines and 9.9kΩ on RESETn,
-but only RESETn was connected to the Feather M4 for this experiment. Saleae
-Logic 8 calibrated voltage quantization step size appears to about 1.35mV,
-corresponding to a current step size of 5.2µA (200 V/V gain across 0.130Ω).
+Saleae Logic 8 calibrated voltage quantization step size appears to about
+1.35mV, corresponding to a current measurement step size of 5.2µA (200 V/V gain
+across 0.130Ω).
 
 | INA190 Vout | gain    | R       | I (Vout/gain/R) | Comment                             |
 |-------------|---------|---------|-----------------|-------------------------------------|
