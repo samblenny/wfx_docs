@@ -97,24 +97,25 @@ sl_status_t sl_wfx_host_get_firmware_size(uint32_t *firmware_size)
 
 sl_status_t sl_wfx_host_get_pds_data(const char **pds_data, uint16_t index)
 {
-    dbg("get_pds_data");
+    dbg("get_pds_data(");
+    dbg_hex32(pds_data);
+    dbg(", ");
+    dbg_u16(index);
+    dbg(") -> ");
     if(pds_data == NULL) {
-        dbg(": *pds_data == NULL\n");
+        dbg("FAIL(pds_data==NULL)\n");
         return SL_STATUS_FAIL;
     }
     // pds_table is an array of strings, one line per string
-    dbg("(*pds_data:..., index:");
-    dbg_u32(index);
-    dbg(")");
     if(index < pds_table_lines) {
         // Get a line of the PDS array as requested by index
         *pds_data = pds_table[index];
     } else {
-        dbg(" -> FAIL(index >= lines)\n");
+        dbg("FAIL(index >= lines)\n");
         return SL_STATUS_FAIL;
     }
-    dbg(" -> OK(*pds_data-start=");
-    dbg_u32((uint32_t)(*pds_data-pds_table[0]));
+    dbg(" -> OK(");
+    dbg_hex32((uint32_t)(*pds_data));
     dbg(")\n");
     return SL_STATUS_OK;
 }
@@ -140,22 +141,22 @@ sl_status_t sl_wfx_host_get_pds_size(uint16_t *pds_size)
  */
 sl_status_t sl_wfx_host_deinit(void)
 {
-    dbg("deinit() -> OK\n");
+    dbg("deinit\n");
     return m4_deinit();
 }
 
 sl_status_t sl_wfx_host_reset_chip(void)
 {
     sl_status_t status = m4_reset_chip();
-    dbg("reset_chip\n");
+    dbg("reset\n");
     return status;
 }
 
 sl_status_t sl_wfx_host_set_wake_up_pin(uint8_t state)
 {
-    dbg("set_wake_up_pin(state:");
+    dbg("set_wake_up_pin(");
     dbg_u8(state);
-    dbg(") -> OK\n");
+    dbg(")\n");
     m4_set_wup(state);
     return SL_STATUS_OK;
 }
@@ -177,7 +178,7 @@ sl_status_t sl_wfx_host_sleep_grant(
 
 sl_status_t sl_wfx_host_setup_waited_event(uint8_t event_id)
 {
-    dbg("setup_waited_event(event_id:");
+    dbg("setup_waited_event(");
     dbg_u8(event_id);
     dbg(") -> ");
     if(_context_ptr == NULL) {
@@ -196,20 +197,19 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
 {
     sl_status_t result;
     uint16_t ctrl_reg = 0;
-    // TODO: The real event payload should come from the queue for events from
-    //   sl_wfx_host_post_event().
-    //   Use *event_payload_out = sl_wfx_context->event_payload_buffer
-    dbg("wait_for_confirmation(conf_id:");
+    dbg("wait_for_conf(");
     dbg_u8(confirmation_id);
-    dbg(", timeout_ms:");
+    dbg(", ");
     dbg_u32(timeout_ms);
-    dbg(", ...) -> ");
+    dbg(", ");
+    dbg_hex32(event_payload_out);
+    dbg(")");
     if(event_payload_out == NULL) {
-        dbg("FAIL(event_payload_out == NULL)\n");
+        dbg(" -> FAIL(event_payload_out==NULL)\n");
         return SL_STATUS_FAIL;
     }
     if(_context_ptr == NULL) {
-        dbg("FAIL(_context_ptr==NULL)\n");
+        dbg(" -> FAIL(_context_ptr==NULL)\n");
         return SL_STATUS_FAIL;
     }
     for(uint32_t t=0; t<timeout_ms; t++) {
@@ -217,15 +217,19 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
             m4_wait(1);
             continue;
         }
+        dbg("...\n");
         result = sl_wfx_receive_frame(&ctrl_reg);
         if(result != SL_STATUS_OK) {
+            dbg("...wait_for_conf -> FAIL(rxframe status:");
+            dbg_hex32(result);
+            dbg(")\n");
             return result;
         }
         sl_wfx_host_setup_waited_event(confirmation_id);
         if(_posted_event_id == confirmation_id) {
             _posted_event_id = 0;
             *event_payload_out = _context_ptr->event_payload_buffer;
-            dbg("OK\n");
+            dbg("...wait_for_conf -> OK\n");
             switch(confirmation_id) {
             case SL_WFX_STARTUP_IND_ID:
                 dbg_startup_ind(*event_payload_out);
@@ -234,7 +238,7 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
             return SL_STATUS_OK;
         }
     }
-    dbg("FAIL(TIMEOUT)\n");
+    dbg("...wait_for_conf -> FAIL(TIMEOUT)\n");
     return SL_STATUS_TIMEOUT;
 }
 
@@ -285,43 +289,32 @@ sl_status_t sl_wfx_host_allocate_buffer(
     sl_wfx_buffer_type_t type,
     uint32_t buffer_size)
 {
-    dbg("alloc");
-    if(buffer == NULL) {
-        dbg(": buffer == NULL\n");
-        return SL_STATUS_FAIL;
-    }
-    dbg("(**bufer:..., type:");
-    switch(type) {
-    case SL_WFX_TX_FRAME_BUFFER:
-        dbg("TX_FRAME_BUFFER");
-        break;
-    case SL_WFX_RX_FRAME_BUFFER:
-        dbg("RX_FRAME_BUFFER");
-        break;
-    case SL_WFX_CONTROL_BUFFER:
-        dbg("CONTROL_BUFFER");
-        break;
-    default:
-        dbg("???");
-    }
-    dbg(", buffer_size:");
+    dbg("alloc(");
+    dbg_hex32((uint32_t)buffer);
+    dbg(", ");
+    dbg_buffer_type(type);
+    dbg(", ");
     dbg_u32(buffer_size);
     dbg(") -> ");
+    if(buffer == NULL) {
+        dbg("FAIL(buffer==NULL)\n");
+        return SL_STATUS_FAIL;
+    }
     // Allocate a chunk of the pool
     if(_alloc_next + buffer_size < ALLOC_POOL_SIZE) {
         *buffer = &_alloc_pool[_alloc_next];
         // Save pointer and index in case buffer is freed before next alloc
         _alloc_last_ptr = *buffer;
         _alloc_last = _alloc_next;
-        dbg("OK(*buffer=&pool[");
-        dbg_u32(_alloc_next);
+        dbg("OK(");
+        dbg_hex32((uint32_t)buffer);
+        dbg(")\n");
         // Calculate index to start of next allocatable block of pool
         _alloc_next += buffer_size;
         // Calculate high-water mark (index of highest allocated byte of pool)
         if(_alloc_next > 0 && _alloc_next > _alloc_highwater_mark+1) {
             _alloc_highwater_mark = _alloc_next - 1;
         }
-        dbg("])\n");
         return SL_STATUS_OK;
     } else {
         dbg("FAIL(pool too small)\n");
@@ -332,14 +325,18 @@ sl_status_t sl_wfx_host_allocate_buffer(
 // Free a buffer
 sl_status_t sl_wfx_host_free_buffer(void *buffer, sl_wfx_buffer_type_t type)
 {
-    dbg("free(*buffer:");
+    dbg("free(");
+    dbg_hex32((uint32_t)buffer);
+    dbg(", ");
+    dbg_buffer_type(type);
+    dbg(") -> ");
     if(buffer == NULL) {
-        dbg(" NULL) -> FAIL\n");
+        dbg("FAIL(buffer==NULL)\n");
         return SL_STATUS_FAIL;
     }
     if(_alloc_last_ptr == NULL || _alloc_last < 0 || _alloc_last >= ALLOC_POOL_SIZE) {
         // Fail for illegal values of _alloc_last_ptr or _alloc_last
-        dbg(" ?) -> FAIL(last_ptr-&pool: ");
+        dbg("FAIL(last_ptr-&pool: ");
         dbg_u32(_alloc_last_ptr-_alloc_pool);
         dbg(", last: ");
         dbg_u32(_alloc_last);
@@ -355,10 +352,10 @@ sl_status_t sl_wfx_host_free_buffer(void *buffer, sl_wfx_buffer_type_t type)
         _alloc_next = _alloc_last;
         // Setting _alloc_last_ptr = NULL guards against double-free
         _alloc_last_ptr = NULL;
-        dbg(" ==last) -> OK(next: pool[");
+        dbg("OK(next: pool[");
     } else {
         // Otherwise, allow buffer to leak
-        dbg(" !=last) -> OK(leaking, next: pool[");
+        dbg("-> OK(leaking, next: pool[");
     }
     dbg_u32(_alloc_next);
     dbg("])\n");
@@ -368,7 +365,9 @@ sl_status_t sl_wfx_host_free_buffer(void *buffer, sl_wfx_buffer_type_t type)
 // Transmit frame
 sl_status_t sl_wfx_host_transmit_frame(void *frame, uint32_t frame_len)
 {
-    dbg("tx_frame(*frame:..., frame_len:");
+    dbg("tx_frame(");
+    dbg_hex32(frame);
+    dbg(", ");
     dbg_u32(frame_len);
     dbg(")...\n "); // End debug line so it doesn't mix with sl_wfx_data_write
     sl_status_t status;
@@ -385,13 +384,13 @@ sl_status_t sl_wfx_host_transmit_frame(void *frame, uint32_t frame_len)
 
 sl_status_t sl_wfx_host_lock(void)
 {
-    dbg("lock() -> OK\n");
+//    dbg("lock() -> OK\n");
     return SL_STATUS_OK;
 }
 
 sl_status_t sl_wfx_host_unlock(void)
 {
-    dbg("unlock() -> OK\n");
+//    dbg("unlock() -> OK\n");
     return SL_STATUS_OK;
 }
 
@@ -488,17 +487,17 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
     for(int i=0; i < header_length; i++) {
         dbg_hex8(header[i]);
     }
-    if(buffer_length <= 32) {
+    if(buffer_length <= 8) {
         dbg(", 0x");
         for(int i=0; i < buffer_length; i++) {
             dbg_hex8(buffer[i]);
         }
     } else {
-        dbg(" <buffer_length:");
+        dbg(" <");
         dbg_u32(buffer_length);
         dbg(" bytes>");
     }
-    dbg(") ");
+    dbg(") -> ");
 
     // Do the hardware SPI transfer
     bool read;
@@ -511,7 +510,7 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
         // SL_WFX_BUS_WRITE_AND_READ enum value that is not used by any driver
         // code. That's good, because it would be difficult to implement
         // efficiently with the hardware SPI peripheral.
-        dbg("SPI transfer -> FAIL(unsupported transfer type)\n");
+        dbg("FAIL(unsupported transfer type)\n");
         return SL_STATUS_FAIL;
     }
     m4_spi_transfer(read, header, header_length, buffer, buffer_length);
@@ -537,7 +536,6 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
             buf = ((uint32_t)(buffer[3]))<<24 | ((uint32_t)(buffer[2]))<<16;
             buf |= ((uint32_t)(buffer[1]))<<8 | (uint32_t)(buffer[0]);
         }
-        dbg("-> ");
         uint32_t width = 25;
         if(cmd_rw == 'W') {
             dbg("W(");

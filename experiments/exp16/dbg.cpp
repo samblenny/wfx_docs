@@ -150,3 +150,17 @@ void dbg_startup_ind(sl_wfx_startup_ind_t *startup) {
     dbg_u8(b->firmware_type);
     dbg("\n");
 }
+
+void dbg_buffer_type(sl_wfx_buffer_type_t type) {
+    switch(type) {
+    case SL_WFX_TX_FRAME_BUFFER:
+        dbg("TX_FRAME_BUFFER");
+        break;
+    case SL_WFX_RX_FRAME_BUFFER:
+        dbg("RX_FRAME_BUFFER");
+        break;
+    case SL_WFX_CONTROL_BUFFER:
+        dbg("CONTROL_BUFFER");
+        break;
+    }
+}

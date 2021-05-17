@@ -6,6 +6,7 @@ extern "C"
 #include <stdint.h>
 #include <stdbool.h>
 #include "firmware/sl_wfx_general_api.h"
+#include "sl_wfx_constants.h"
 
 /**
  * Debug helper functions
@@ -25,6 +26,7 @@ void dbg_hex32(uint32_t val);
 void dbg_decode_addr(uint16_t addr);
 void dbg_decode_u32(uint32_t val, uint32_t width);
 void dbg_startup_ind(sl_wfx_startup_ind_t *startup);
+void dbg_buffer_type(sl_wfx_buffer_type_t type);
 
 #ifdef __cplusplus
 }
