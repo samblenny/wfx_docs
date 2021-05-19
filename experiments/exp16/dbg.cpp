@@ -42,14 +42,14 @@ void dbg_hex16(uint16_t val) {
 
 void dbg_hex32(uint32_t val) {
     if(DBG_MUTE) { return; }
-    if      (val < 0x10)       { Serial.print("0x0000000"); }
-    else if (val < 0x100)      { Serial.print("0x000000"); }
-    else if (val < 0x1000)     { Serial.print("0x00000"); }
-    else if (val < 0x10000)    { Serial.print("0x0000"); }
-    else if (val < 0x100000)   { Serial.print("0x000"); }
-    else if (val < 0x1000000)  { Serial.print("0x00"); }
-    else if (val < 0x10000000) { Serial.print("0x0"); }
-    else                       { Serial.print("0x"); }
+    if      (val < 0x10)       { Serial.print("0000000"); }
+    else if (val < 0x100)      { Serial.print("000000"); }
+    else if (val < 0x1000)     { Serial.print("00000"); }
+    else if (val < 0x10000)    { Serial.print("0000"); }
+    else if (val < 0x100000)   { Serial.print("000"); }
+    else if (val < 0x1000000)  { Serial.print("00"); }
+    else if (val < 0x10000000) { Serial.print("0"); }
+    else                       { /*Serial.print("");*/ }
     Serial.print(val, HEX);
     Serial.flush();
 }
@@ -79,36 +79,35 @@ void dbg_decode_addr(uint16_t addr) {
     }
 }
 
-// Debug print decoded magic values into minimum width field (w)
-void dbg_decode_u32(uint32_t val, uint32_t w) {
+// Debug print decoded magic values
+void dbg_decode_u32(uint32_t val) {
     switch(val) {
-    case 0x09002000: dbg_w("SHARED_RAM_DEBUG_AREA", w); break;
-    case 0x09004000: dbg_w("DOWNLOAD_FIFO_BASE", w);    break;
-    case ADDR_DWL_CTRL_AREA_IMAGE_SIZE:  dbg_w("CTRL_AREA_IMAGE_SIZE", w);  break;
-    case ADDR_DWL_CTRL_AREA_PUT:         dbg_w("CTRL_AREA_PUT", w);         break;
-    case ADDR_DWL_CTRL_AREA_GET:         dbg_w("CTRL_AREA_GET", w);         break;
-    case ADDR_DWL_CTRL_AREA_HOST_STATUS: dbg_w("CTRL_AREA_HOST_STATUS", w); break;
-    case ADDR_DWL_CTRL_AREA_NCP_STATUS:  dbg_w("CTRL_AREA_NCP_STATUS", w);  break;
-    case ADDR_DWL_CTRL_AREA_SIGNATURE:   dbg_w("CTRL_AREA_SIGNATURE", w);   break;
-    case ADDR_DWL_CTRL_AREA_FW_HASH:     dbg_w("CTRL_AREA_FW_HASH", w);     break;
-    case ADDR_DWL_CTRL_AREA_FW_VERSION:  dbg_w("CTRL_AREA_FW_VERSION", w);  break;
-    case 0x12345678: dbg_w("*_STATE_NOT_READY", w);           break;
-    case 0x7AB41D19: dbg_w("NCP_STATE_PUB_KEY_RDY", w);       break;
-    case 0x87654321: dbg_w("*_STATE_READY", w);               break;
-    case 0xA753BD99: dbg_w("HOST_STATE_HOST_INFO_READ", w);   break;
-    case 0xABCDDCBA: dbg_w("*_STATE_*LOAD_PENDING", w);       break;
-    case 0xBD53EF99: dbg_w("NCP_STATE_INFO_READY", w);        break;
-    case 0xCAFEFECA: dbg_w("NCP_STATE_DOWNLOAD_COMPLETE", w); break;
-    case 0xD4C64A99: dbg_w("*_STATE_(*_COMPLETE|*_OK)", w);   break;
-    case 0xFFFFFFFF: dbg_w("*_STATE_UNDEF", w);               break;
+    case 0x09002000: dbg("SHARED_RAM_DEBUG_AREA"); break;
+    case 0x09004000: dbg("DOWNLOAD_FIFO_BASE");    break;
+    case ADDR_DWL_CTRL_AREA_IMAGE_SIZE:  dbg("CTRL_AREA_IMAGE_SIZE");  break;
+    case ADDR_DWL_CTRL_AREA_PUT:         dbg("CTRL_AREA_PUT");         break;
+    case ADDR_DWL_CTRL_AREA_GET:         dbg("CTRL_AREA_GET");         break;
+    case ADDR_DWL_CTRL_AREA_HOST_STATUS: dbg("CTRL_AREA_HOST_STATUS"); break;
+    case ADDR_DWL_CTRL_AREA_NCP_STATUS:  dbg("CTRL_AREA_NCP_STATUS");  break;
+    case ADDR_DWL_CTRL_AREA_SIGNATURE:   dbg("CTRL_AREA_SIGNATURE");   break;
+    case ADDR_DWL_CTRL_AREA_FW_HASH:     dbg("CTRL_AREA_FW_HASH");     break;
+    case ADDR_DWL_CTRL_AREA_FW_VERSION:  dbg("CTRL_AREA_FW_VERSION");  break;
+    case 0x12345678: dbg("*_STATE_NOT_READY");           break;
+    case 0x7AB41D19: dbg("NCP_STATE_PUB_KEY_RDY");       break;
+    case 0x87654321: dbg("*_STATE_READY");               break;
+    case 0xA753BD99: dbg("HOST_STATE_HOST_INFO_READ");   break;
+    case 0xABCDDCBA: dbg("*_STATE_*LOAD_PENDING");       break;
+    case 0xBD53EF99: dbg("NCP_STATE_INFO_READY");        break;
+    case 0xCAFEFECA: dbg("NCP_STATE_DOWNLOAD_COMPLETE"); break;
+    case 0xD4C64A99: dbg("*_STATE_(*_COMPLETE|*_OK)");   break;
+    case 0xFFFFFFFF: dbg("*_STATE_UNDEF");               break;
     case HOST_STATE_OK_TO_JUMP:
         // Firmware load was successful, so unmute dbg trace
         dbg_set_mute(false);
-        dbg_w("HOST_STATE_OK_TO_JUMP", w);
+        dbg("HOST_STATE_OK_TO_JUMP");
         break;
     default:
         dbg_hex32(val);
-        dbg_w("", w-10);
     }
 }
 
@@ -129,11 +128,21 @@ void dbg_startup_ind(sl_wfx_startup_ind_t *startup) {
     dbg("\n  size_inp_ch_buf: ");
     dbg_u16(b->size_inp_ch_buf);
     for(uint8_t i=0; i<2; i++) {
-        dbg("\n  mac_addr[0]: ");
-        dbg_hex8(b->mac_addr[i][0]);
+        dbg("\n  mac_addr[");
+        dbg_u8(i);
+        dbg("]: ");
+        if(DBG_HIDE_MAC) {
+            dbg("--");
+        } else {
+            dbg_hex8(b->mac_addr[i][0]);
+        }
         for(uint8_t j=1; j<SL_WFX_MAC_ADDR_SIZE; j++) {
             dbg(":");
-            dbg_hex8(b->mac_addr[i][j]);
+            if(DBG_HIDE_MAC) {
+                dbg("--");
+            } else {
+                dbg_hex8(b->mac_addr[i][j]);
+            }
         }
     }
     dbg("\n  api_version_minor: ");
@@ -163,4 +172,12 @@ void dbg_buffer_type(sl_wfx_buffer_type_t type) {
         dbg("CONTROL_BUFFER");
         break;
     }
+}
+
+void dbg_alloc_stack(uint8_t *prev_ptr, uint8_t *curr_ptr) {
+    dbg("alloc_stack(");
+    dbg_hex32((uint32_t)prev_ptr);
+    dbg(", ");
+    dbg_hex32((uint32_t)curr_ptr);
+    dbg(")");
 }

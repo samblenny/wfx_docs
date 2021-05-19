@@ -16,8 +16,10 @@ extern const uint16_t pds_table_lines;
 // Memory pool for host_allocate_buffer
 #define ALLOC_POOL_SIZE 4096
 static uint8_t _alloc_pool[ALLOC_POOL_SIZE];
-static uint8_t *_alloc_last_ptr = NULL;
-static uint32_t _alloc_last = 0;
+static uint8_t *_alloc_curr_ptr = NULL;
+static uint8_t *_alloc_prev_ptr = NULL;
+static uint32_t _alloc_curr = 0;
+static uint32_t _alloc_prev = 0;
 static uint32_t _alloc_next = 0;
 static uint32_t _alloc_highwater_mark = 0;
 
@@ -297,18 +299,24 @@ sl_status_t sl_wfx_host_allocate_buffer(
     dbg_u32(buffer_size);
     dbg(") -> ");
     if(buffer == NULL) {
-        dbg("FAIL(buffer==NULL)\n");
+        dbg("FAIL(buffer==NULL) ");
+        dbg_alloc_stack(_alloc_curr_ptr, _alloc_prev_ptr);
+        dbg("\n\n");
         return SL_STATUS_FAIL;
     }
     // Allocate a chunk of the pool
     if(_alloc_next + buffer_size < ALLOC_POOL_SIZE) {
         *buffer = &_alloc_pool[_alloc_next];
         // Save pointer and index in case buffer is freed before next alloc
-        _alloc_last_ptr = *buffer;
-        _alloc_last = _alloc_next;
+        _alloc_prev_ptr = _alloc_curr_ptr;
+        _alloc_curr_ptr = *buffer;
+        _alloc_prev = _alloc_curr;
+        _alloc_curr = _alloc_next;
         dbg("OK(");
-        dbg_hex32((uint32_t)buffer);
-        dbg(")\n");
+        dbg_hex32((uint32_t)(*buffer));
+        dbg(") ");
+        dbg_alloc_stack(_alloc_curr_ptr, _alloc_prev_ptr);
+        dbg("\n\n");
         // Calculate index to start of next allocatable block of pool
         _alloc_next += buffer_size;
         // Calculate high-water mark (index of highest allocated byte of pool)
@@ -317,7 +325,9 @@ sl_status_t sl_wfx_host_allocate_buffer(
         }
         return SL_STATUS_OK;
     } else {
-        dbg("FAIL(pool too small)\n");
+        dbg("FAIL(pool too small) ");
+        dbg_alloc_stack(_alloc_curr_ptr, _alloc_prev_ptr);
+        dbg("\n\n");
         return SL_STATUS_FAIL;
     }
 }
@@ -329,36 +339,40 @@ sl_status_t sl_wfx_host_free_buffer(void *buffer, sl_wfx_buffer_type_t type)
     dbg_hex32((uint32_t)buffer);
     dbg(", ");
     dbg_buffer_type(type);
-    dbg(") -> ");
+    dbg(") ");
+    dbg_alloc_stack(_alloc_curr_ptr, _alloc_prev_ptr);
+    dbg(" -> ");
     if(buffer == NULL) {
-        dbg("FAIL(buffer==NULL)\n");
+        dbg("FAIL(buffer==NULL)\n\n");
         return SL_STATUS_FAIL;
     }
-    if(_alloc_last_ptr == NULL || _alloc_last < 0 || _alloc_last >= ALLOC_POOL_SIZE) {
-        // Fail for illegal values of _alloc_last_ptr or _alloc_last
-        dbg("FAIL(last_ptr-&pool: ");
-        dbg_u32(_alloc_last_ptr-_alloc_pool);
-        dbg(", last: ");
-        dbg_u32(_alloc_last);
-        dbg(")\n");
+    if(_alloc_curr_ptr == NULL || _alloc_curr < 0 || _alloc_curr >= ALLOC_POOL_SIZE) {
+        // Fail for illegal values of _alloc_curr_ptr or _alloc_curr
+        dbg("FAIL(confused) ");
+        dbg_alloc_stack(_alloc_curr_ptr, _alloc_prev_ptr);
+        dbg("\n\n");
         return SL_STATUS_FAIL;
     }
-    if(buffer == _alloc_last_ptr) {
+    if(buffer == _alloc_curr_ptr) {
         // For free() of last alloc(), zero the buffer and return it to pool
-        uint32_t size = _alloc_next - _alloc_last;
-        memset((void*)_alloc_last_ptr, 0, size);
-        // Adjust start of next available block of the pool, intentionally
-        // allowing _alloc_last to keep a now invalid value (see next comment)
-        _alloc_next = _alloc_last;
-        // Setting _alloc_last_ptr = NULL guards against double-free
-        _alloc_last_ptr = NULL;
-        dbg("OK(next: pool[");
+        uint32_t size = _alloc_next - _alloc_curr;
+        memset((void*)_alloc_curr_ptr, 0, size);
+        // Adjust start of next available block of the pool, allowing _alloc_prev to
+        // have an invalid value (see next comment)
+        _alloc_next = _alloc_curr;
+        _alloc_curr = _alloc_prev;
+        // Setting _alloc_prev_ptr=NULL guards against double free
+        _alloc_curr_ptr = _alloc_prev_ptr;
+        _alloc_prev_ptr = NULL;
+        dbg("OK(pool[");
     } else {
         // Otherwise, allow buffer to leak
         dbg("-> OK(leaking, next: pool[");
     }
     dbg_u32(_alloc_next);
-    dbg("])\n");
+    dbg("]) ");
+    dbg_alloc_stack(_alloc_curr_ptr, _alloc_prev_ptr);
+    dbg("\n\n");
     return SL_STATUS_OK;
 }
 
@@ -375,9 +389,9 @@ sl_status_t sl_wfx_host_transmit_frame(void *frame, uint32_t frame_len)
     if(status == SL_STATUS_OK) {
         dbg(" ...tx_frame -> OK\n");
     } else {
-        dbg(" ...tx_frame -> FAIL(status:0x)");
+        dbg(" ...tx_frame -> FAIL(");
         dbg_hex32(status);
-        dbg("\n");
+        dbg(")\n");
     }
     return status;
 }
@@ -483,12 +497,12 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
     static bool download_complete = false;
 
     // Debug print the raw byte array arguments
-    dbg("SPI(0x");
+    dbg("SPI(");
     for(int i=0; i < header_length; i++) {
         dbg_hex8(header[i]);
     }
     if(buffer_length <= 8) {
-        dbg(", 0x");
+        dbg(", ");
         for(int i=0; i < buffer_length; i++) {
             dbg_hex8(buffer[i]);
         }
@@ -536,28 +550,23 @@ sl_status_t sl_wfx_host_spi_transfer_no_cs_assert(
             buf = ((uint32_t)(buffer[3]))<<24 | ((uint32_t)(buffer[2]))<<16;
             buf |= ((uint32_t)(buffer[1]))<<8 | (uint32_t)(buffer[0]);
         }
-        uint32_t width = 25;
         if(cmd_rw == 'W') {
             dbg("W(");
             dbg_decode_addr(cmd_addr);
             dbg("=");
-            dbg_decode_u32(buf, width);
-            dbg(")");
+            dbg_decode_u32(buf); // this is the NON-packed buffer value
+            dbg(") -> OK\n");
         } else {
             dbg("R(");
             dbg_decode_addr(cmd_addr);
-            dbg_w("", width+1);
-            dbg(")");
+            dbg(") -> OK(");
+            dbg_decode_u32(buf);  // this is the NON-packed buffer value
+            dbg(")\n");
         }
-        // Debug print the NOT-packed output value of buffer
-        dbg(" -> OK(");
-        if(cmd_rw == 'R') { dbg_decode_u32(buf, 10); }
-        else              { dbg_hex32(buf); }
-        dbg(")\n");
     } else {
         // Since (header_length == 2 && buffer_length == 4) was false, this is
         // not a ctrl/config register access. So, use simpler debug.
-        dbg("-> OK\n");
+        dbg("OK\n");
     }
     return SL_STATUS_OK;
 }

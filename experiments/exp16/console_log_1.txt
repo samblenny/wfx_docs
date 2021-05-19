@@ -1,1 +1,165 @@
+HOST_STATE_OK_TO_JUMP) -> OK
+irq=on
+SPI(8002, 00000000) -> R(Config_R) -> OK(02040600)
+SPI(0002, 06000205) -> W(Config_R=02050600) -> OK
+SPI(8002, 00000000) -> R(Config_R) -> OK(02050600)
+SPI(0002, 02000205) -> W(Config_R=02050200) -> OK
+wait_for_conf(225, 5000, 2002FFB0)...
+SPI(9002, 00000000) -> R(ControlR) -> OK(00007062)
+alloc(2002FF54, CONTROL_BUFFER, 256) -> OK(2000053C) alloc_stack(2000053C, 00000000)
+
+SPI(A063 <198 bytes>) -> OK
+post_event() -> OK(header.id: SL_WFX_STARTUP_IND_ID)
+free(2000053C, CONTROL_BUFFER) alloc_stack(2000053C, 00000000) -> OK(pool[0]) alloc_stack(00000000, 00000000)
+
+setup_waited_event(225) -> OK
+...wait_for_conf -> OK
+startup_ind:
+  status: 00000000
+  hardware_id: 1002
+  num_inp_ch_bufs: 30
+  size_inp_ch_buf: 1616
+  mac_addr[0]: --:--:--:--:--:--
+  mac_addr[1]: --:--:--:--:--:--
+  api_version_minor: 7
+  api_version_major: 3
+  firmware_build: 2
+  firmware_minor: 12
+  firmware_major: 3
+  firmware_type: 1
+set_wake_up_pin(1)
+get_pds_size: 6 lines
+get_pds_data(2002FFB4, 0) ->  -> OK(0000A56B)
+alloc(2002FF80, CONTROL_BUFFER, 20) -> OK(2000053C) alloc_stack(2000053C, 00000000)
+
+setup_waited_event(9) -> OK
+tx_frame(2000053C, 20)...
+ SPI(200A <20 bytes>) -> OK
+ ...tx_frame -> OK
+wait_for_conf(9, 5000, 2002FF84)...
+SPI(9002, 00000000) -> R(ControlR) -> OK(00003004)
+alloc(2002FF34, CONTROL_BUFFER, 64) -> OK(20000550) alloc_stack(20000550, 2000053C)
+
+SPI(A005 <10 bytes>) -> OK
+post_event() -> OK(header.id: SL_WFX_CONFIGURATION_REQ_ID)
+free(20000550, CONTROL_BUFFER) alloc_stack(20000550, 2000053C) -> OK(pool[20]) alloc_stack(2000053C, 00000000)
+
+setup_waited_event(9) -> OK
+...wait_for_conf -> OK
+free(2000053C, CONTROL_BUFFER) alloc_stack(2000053C, 00000000) -> OK(pool[0]) alloc_stack(00000000, 00000000)
+
+get_pds_data(2002FFB4, 1) ->  -> OK(0000A579)
+alloc(2002FF80, CONTROL_BUFFER, 324) -> OK(2000053C) alloc_stack(2000053C, 00000000)
+
+setup_waited_event(9) -> OK
+tx_frame(2000053C, 324)...
+ SPI(20A2 <324 bytes>) -> OK
+ ...tx_frame -> OK
+wait_for_conf(9, 5000, 2002FF84)...
+SPI(9002, 00000000) -> R(ControlR) -> OK(00003004)
+alloc(2002FF34, CONTROL_BUFFER, 64) -> OK(20000680) alloc_stack(20000680, 2000053C)
+
+SPI(A005 <10 bytes>) -> OK
+post_event() -> OK(header.id: SL_WFX_CONFIGURATION_REQ_ID)
+free(20000680, CONTROL_BUFFER) alloc_stack(20000680, 2000053C) -> OK(pool[324]) alloc_stack(2000053C, 00000000)
+
+setup_waited_event(9) -> OK
+...wait_for_conf -> OK
+free(2000053C, CONTROL_BUFFER) alloc_stack(2000053C, 00000000) -> OK(pool[0]) alloc_stack(00000000, 00000000)
+
+get_pds_data(2002FFB4, 2) ->  -> OK(0000A6B7)
+alloc(2002FF80, CONTROL_BUFFER, 64) -> OK(2000053C) alloc_stack(2000053C, 00000000)
+
+setup_waited_event(9) -> OK
+tx_frame(2000053C, 64)...
+ SPI(2020 <64 bytes>) -> OK
+ ...tx_frame -> OK
+wait_for_conf(9, 5000, 2002FF84)...
+SPI(9002, 00000000) -> R(ControlR) -> OK(00003004)
+alloc(2002FF34, CONTROL_BUFFER, 64) -> OK(2000057C) alloc_stack(2000057C, 2000053C)
+
+SPI(A005 <10 bytes>) -> OK
+post_event() -> OK(header.id: SL_WFX_CONFIGURATION_REQ_ID)
+free(2000057C, CONTROL_BUFFER) alloc_stack(2000057C, 2000053C) -> OK(pool[64]) alloc_stack(2000053C, 00000000)
+
+setup_waited_event(9) -> OK
+...wait_for_conf -> OK
+free(2000053C, CONTROL_BUFFER) alloc_stack(2000053C, 00000000) -> OK(pool[0]) alloc_stack(00000000, 00000000)
+
+get_pds_data(2002FFB4, 3) ->  -> OK(0000A6F1)
+alloc(2002FF80, CONTROL_BUFFER, 38) -> OK(2000053C) alloc_stack(2000053C, 00000000)
+
+setup_waited_event(9) -> OK
+tx_frame(2000053C, 38)...
+ SPI(2013 <38 bytes>) -> OK
+ ...tx_frame -> OK
+wait_for_conf(9, 5000, 2002FF84)...
+SPI(9002, 00000000) -> R(ControlR) -> OK(00003004)
+alloc(2002FF34, CONTROL_BUFFER, 64) -> OK(20000562) alloc_stack(20000562, 2000053C)
+
+SPI(A005 <10 bytes>) -> OK
+post_event() -> OK(header.id: SL_WFX_CONFIGURATION_REQ_ID)
+free(20000562, CONTROL_BUFFER) alloc_stack(20000562, 2000053C) -> OK(pool[38]) alloc_stack(2000053C, 00000000)
+
+setup_waited_event(9) -> OK
+...wait_for_conf -> OK
+free(2000053C, CONTROL_BUFFER) alloc_stack(2000053C, 00000000) -> OK(pool[0]) alloc_stack(00000000, 00000000)
+
+get_pds_data(2002FFB4, 4) ->  -> OK(0000A711)
+alloc(2002FF80, CONTROL_BUFFER, 194) -> OK(2000053C) alloc_stack(2000053C, 00000000)
+
+setup_waited_event(9) -> OK
+tx_frame(2000053C, 194)...
+ SPI(2061 <194 bytes>) -> OK
+ ...tx_frame -> OK
+wait_for_conf(9, 5000, 2002FF84)...
+SPI(9002, 00000000) -> R(ControlR) -> OK(00003004)
+alloc(2002FF34, CONTROL_BUFFER, 64) -> OK(200005FE) alloc_stack(200005FE, 2000053C)
+
+SPI(A005 <10 bytes>) -> OK
+post_event() -> OK(header.id: SL_WFX_CONFIGURATION_REQ_ID)
+free(200005FE, CONTROL_BUFFER) alloc_stack(200005FE, 2000053C) -> OK(pool[194]) alloc_stack(2000053C, 00000000)
+
+setup_waited_event(9) -> OK
+...wait_for_conf -> OK
+free(2000053C, CONTROL_BUFFER) alloc_stack(2000053C, 00000000) -> OK(pool[0]) alloc_stack(00000000, 00000000)
+
+get_pds_data(2002FFB4, 5) ->  -> OK(0000A7CE)
+alloc(2002FF80, CONTROL_BUFFER, 20) -> OK(2000053C) alloc_stack(2000053C, 00000000)
+
+setup_waited_event(9) -> OK
+tx_frame(2000053C, 20)...
+ SPI(200A <20 bytes>) -> OK
+ ...tx_frame -> OK
+wait_for_conf(9, 5000, 2002FF84)...
+SPI(9002, 00000000) -> R(ControlR) -> OK(00003004)
+alloc(2002FF34, CONTROL_BUFFER, 64) -> OK(20000550) alloc_stack(20000550, 2000053C)
+
+SPI(A005 <10 bytes>) -> OK
+post_event() -> OK(header.id: SL_WFX_CONFIGURATION_REQ_ID)
+free(20000550, CONTROL_BUFFER) alloc_stack(20000550, 2000053C) -> OK(pool[20]) alloc_stack(2000053C, 00000000)
+
+setup_waited_event(9) -> OK
+...wait_for_conf -> OK
+free(2000053C, CONTROL_BUFFER) alloc_stack(2000053C, 00000000) -> OK(pool[0]) alloc_stack(00000000, 00000000)
+
+============================================
+sl_wfx_init() -> OK, calling sl_wfx_deinit()
+============================================
+alloc(2002FFDC, CONTROL_BUFFER, 4) -> OK(2000053C) alloc_stack(2000053C, 00000000)
+
+tx_frame(2000053C, 4)...
+ SPI(2002, 04003200) -> W(IO_Queue=00320004) -> OK
+ ...tx_frame -> OK
+SPI(9002, 00000000) -> R(ControlR) -> OK(00003000)
+SPI(1002, 00200000) -> W(ControlR=00002000) -> OK
+set_wake_up_pin(0)
+free(2000053C, CONTROL_BUFFER) alloc_stack(2000053C, 00000000) -> OK(pool[0]) alloc_stack(00000000, 00000000)
+
+SPI(8002, 00000000) -> R(Config_R) -> OK(00000000)
+SPI(0002, 00000000) -> W(Config_R=00000000) -> OK
+irq=off
+deinit_bus() -> OK(_alloc_highwater_mark: 387, context->used_buffers: 1)
+m4_deinit_bus
+m4_deinit
 
