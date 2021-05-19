@@ -3,11 +3,10 @@ unofficial WF200 documentation
 
 ## Experiments
 
+- [exp16](experiments/exp16)
 - [exp15](experiments/exp15)
 - [exp14](experiments/exp14)
 - [exp13](experiments/exp13)
-- [exp12](experiments/exp12)
-- [exp11](experiments/exp11)
 - ... (see [experiments/](experiments))
 
 
