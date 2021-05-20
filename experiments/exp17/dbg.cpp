@@ -67,8 +67,8 @@ void dbg_hex32(uint32_t val) {
  */
 void dbg_decode_addr(uint16_t addr) {
     switch(addr) {
-    case 0: dbg("Config_R"); break;
-    case 1: dbg("ControlR"); break;
+    case 0: dbg("Conf"); break;
+    case 1: dbg("Ctrl"); break;
     case 2: dbg("IO_Queue"); break;
     case 3: dbg("AHB_Data"); break;
     case 4: dbg("SRAM_Adr"); break;
@@ -106,8 +106,6 @@ void dbg_decode_u32(uint32_t val) {
     case 0xD4C64A99: dbg("*_STATE_(*_COMPLETE|*_OK)");   break;
     case 0xFFFFFFFF: dbg("*_STATE_UNDEF");               break;
     case HOST_STATE_OK_TO_JUMP:
-        // Firmware load was successful, so unmute dbg trace
-        dbg_set_mute(false);
         dbg("HOST_STATE_OK_TO_JUMP");
         break;
     default:
@@ -168,22 +166,48 @@ void dbg_startup_ind(sl_wfx_startup_ind_t *startup) {
 void dbg_buffer_type(sl_wfx_buffer_type_t type) {
     switch(type) {
     case SL_WFX_TX_FRAME_BUFFER:
-        dbg("TX_FRAME_BUFFER");
+        dbg("TXFR_BUF");
         break;
     case SL_WFX_RX_FRAME_BUFFER:
-        dbg("RX_FRAME_BUFFER");
+        dbg("RXFR_BUF");
         break;
     case SL_WFX_CONTROL_BUFFER:
-        dbg("CONTROL_BUFFER");
+        dbg("CTRL_BUF");
         break;
     }
 }
 
 // Dump the stack of recently allocated buffer pointers (like a free-list)
 void dbg_alloc_stack(uint8_t *prev_ptr, uint8_t *curr_ptr) {
-    dbg("alloc_stack(");
+    dbg("(astk ");
     dbg_hex32((uint32_t)prev_ptr);
-    dbg(", ");
+    dbg(" ");
     dbg_hex32((uint32_t)curr_ptr);
     dbg(")");
+}
+
+// Decode a event message id (e.g. SL_WFX_.*_ID)
+void dbg_message_id(uint8_t id) {
+    switch(id) {
+    case SL_WFX_STARTUP_IND_ID:
+        dbg("STARTUP_IND");
+        break;
+    case SL_WFX_CONFIGURATION_REQ_ID:
+        dbg("CONFIGURATION_REQ");
+        break;
+    case SL_WFX_START_SCAN_CNF_ID:
+        dbg("START_SCAN_CNF");
+        break;
+    case SL_WFX_STOP_SCAN_CNF_ID:
+        dbg("STOP_SCAN_CNF");
+        break;
+    case SL_WFX_SCAN_RESULT_IND_ID:
+        dbg("SCAN_RESULT");
+        break;
+    case SL_WFX_SCAN_COMPLETE_IND_ID:
+        dbg("SCAN_COMPLETE");
+        break;
+    default:
+        dbg_hex16(id);
+    }
 }

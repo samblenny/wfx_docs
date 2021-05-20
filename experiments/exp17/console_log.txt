@@ -1,1 +1,75 @@
+### Starting Active SSID Scan ###
+(wait_ev START_SCAN_CNF) OK
+(wait_conf START_SCAN_CNF 5000 2002FFA4)...
+(post_event) (ssid_scanning true)
+(OK START_SCAN_CNF)
+(wait_ev START_SCAN_CNF) OK
+...wait_conf -> OK
+.(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$.(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$..............................................................................
+........................................................(post_event) (OK SCAN_RESULT)
+$........................
+.........................................(post_event) (ssid_scanning false)
+(OK SCAN_COMPLETE)
+$
+### Stoping Active SSID Scan ###
+(wait_ev STOP_SCAN_CNF) OK
+(wait_conf STOP_SCAN_CNF 5000 2002FF98)...
+(post_event) (OK STOP_SCAN_CNF)
+(wait_ev STOP_SCAN_CNF) OK
+...wait_conf -> OK
+
+### Starting Passive SSID Scan ###
+(wait_ev START_SCAN_CNF) OK
+(wait_conf START_SCAN_CNF 5000 2002FFA4)...
+(post_event) (ssid_scanning true)
+(OK START_SCAN_CNF)
+(wait_ev START_SCAN_CNF) OK
+...wait_conf -> OK
+.(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$.............(post_event) (OK SCAN_RESULT)
+$.............(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$(post_event) (OK SCAN_RESULT)
+$............................(post_event) (OK SCAN_RESULT)
+$.........................
+................................................................................
+................................................................................
+................................................................................
+.........(post_event) (OK SCAN_RESULT)
+$.......................................................................
+...................................................(post_event) (ssid_scanning false)
+(OK SCAN_COMPLETE)
+$
+### Stoping Passive SSID Scan ###
+(wait_ev STOP_SCAN_CNF) OK
+(wait_conf STOP_SCAN_CNF 5000 2002FF98)...
+(post_event) (OK STOP_SCAN_CNF)
+(wait_ev STOP_SCAN_CNF) OK
+...wait_conf -> OK
+_
+(set_wup 0)
+deinit_bus() -> OK(_alloc_highwater_mark: 575, context->used_buffers: 1)
+hal_deinit_bus
+hal_deinit
 

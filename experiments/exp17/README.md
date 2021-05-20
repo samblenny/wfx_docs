@@ -7,6 +7,35 @@ Objectives:
 
 2. SSID scan
 
+## Current Sense Captures
+
+Saleae Logic 8 captures of 200V/V gain INA190 high-side current sense amplifier
+inline with WF200 eval board VMCU.
+
+Saleae Logic 8 calibrated voltage quantization step size appears to about
+1.35mV, corresponding to a current measurement step size of 52µA (200 V/V gain
+across 0.130Ω).
+
+| INA190 Vout | gain    | R       | I (Vout/gain/R) | Comment                             |
+|-------------|---------|---------|-----------------|-------------------------------------|
+| 3.840 V     | 200 V/V | 0.130 Ω | 147.7 mA        | Active scan peak left end           |
+| 3.966 V     | 200 V/V | 0.130 Ω | 152.5 mA        | Active scan peak right end          |
+| 1.191 V     | 200 V/V | 0.130 Ω |  45.8 mA        | Active scan baseline                |
+| 0.350 V     | 200 V/V | 0.130 Ω |  13.5 mA        | Idle between active and passive     |
+| 1.205 V     | 200 V/V | 0.130 Ω |  46.3 mA        | Passive scan peak                   |
+
+![cap_ssid_scans_wide](cap_ssid_scans_wide.png)
+
+![cap_active_scan_3840mV](cap_active_scan_3840mV.png)
+
+![cap_active_scan_3966mV](cap_active_scan_3966mV.png)
+
+![cap_active_scan_1191mV](cap_active_scan_1191mV.png)
+
+![cap_between_scans_350mV](cap_between_scans_350mV.png)
+
+![cap_passive_scan_1205mV](cap_passive_scan_1205mV.png)
+
 
 ## Console Log (serial monitor)
 
