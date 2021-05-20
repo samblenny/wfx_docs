@@ -36,6 +36,10 @@ across 0.130Ω).
 
 ![cap_passive_scan_1205mV](cap_passive_scan_1205mV.png)
 
+![cap_active_scan_closeup](cap_active_scan_closeup.png)
+
+![cap_passive_scan_closeup](cap_passive_scan_closeup.png)
+
 
 ## Console Log (serial monitor)
 
