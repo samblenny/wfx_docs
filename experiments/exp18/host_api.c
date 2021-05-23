@@ -186,32 +186,29 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
     uint32_t timeout_ms,
     void **event_payload_out
 ) {
+    if(event_payload_out == NULL) {
+        dbg("(wait_conf event_payload_out==NULL) FAIL\n");
+        return SL_STATUS_FAIL;
+    }
+    if(_context_ptr == NULL) {
+        dbg("(wait_conf _context_ptr==NULL) FAIL\n");
+        return SL_STATUS_FAIL;
+    }
     sl_status_t result;
     uint16_t ctrl_reg = 0;
     dbg("(wait_conf ");
     dbg_message_id(confirmation_id);
     dbg(" ");
     dbg_u32(timeout_ms);
-    dbg(" ");
-    dbg_hex32(event_payload_out);
-    dbg(")");
-    if(event_payload_out == NULL) {
-        dbg(" -> FAIL(event_payload_out==NULL)\n");
-        return SL_STATUS_FAIL;
-    }
-    if(_context_ptr == NULL) {
-        dbg(" -> FAIL(_context_ptr==NULL)\n");
-        return SL_STATUS_FAIL;
-    }
+    dbg(")\n");
     for(uint32_t t=0; t<timeout_ms; t++) {
         if(!hal_wirq_asserted()) {
             hal_wait(1);
             continue;
         }
-        dbg("...\n");
         result = sl_wfx_receive_frame(&ctrl_reg);
         if(result != SL_STATUS_OK) {
-            dbg("...wait_conf (FAIL rxframe status:");
+            dbg("(FAIL wait_conf status:");
             dbg_hex32(result);
             dbg(")\n");
             return result;
@@ -220,7 +217,7 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
         if(_posted_event_id == confirmation_id) {
             _posted_event_id = 0;
             *event_payload_out = _context_ptr->event_payload_buffer;
-            dbg("...wait_conf -> OK\n");
+            dbg("(OK wait_conf)\n");
             switch(confirmation_id) {
             case SL_WFX_STARTUP_IND_ID:
                 dbg_startup_ind(*event_payload_out);
@@ -229,7 +226,7 @@ sl_status_t sl_wfx_host_wait_for_confirmation(
             return SL_STATUS_OK;
         }
     }
-    dbg("...wait_conf (FAIL TIMEOUT)\n");
+    dbg("(FAIL wait_conf TIMEOUT)\n");
     return SL_STATUS_TIMEOUT;
 }
 
@@ -241,40 +238,39 @@ sl_status_t sl_wfx_host_wait(uint32_t wait_ms) {
 }
 
 sl_status_t sl_wfx_host_post_event(sl_wfx_generic_message_t *event_payload) {
-    dbg("(post_event) ");
     if(event_payload == NULL) {
-        dbg("(FAIL event_payload==NULL)\n");
+        dbg("(post event_payload==NULL) FAIL\n");
         return SL_STATUS_FAIL;
     }
     if(_context_ptr == NULL) {
-        dbg("(FAIL _context_ptr==NULL)\n");
+        dbg("(post _context_ptr==NULL) FAIL\n");
         return SL_STATUS_FAIL;
     }
+    bool generic_dbg = false;
     switch(event_payload->header.id) {
-    case SL_WFX_STARTUP_IND_ID:
-        break;
-    case SL_WFX_CONFIGURATION_REQ_ID:
+    case SL_WFX_SCAN_RESULT_IND_ID:
+        dbg_scan_result((sl_wfx_scan_result_ind_body_t *)(event_payload->body));
         break;
     case SL_WFX_START_SCAN_CNF_ID:
         state_set_ssid_scanning(true);
         break;
-    case SL_WFX_STOP_SCAN_CNF_ID:
-        break;
-    case SL_WFX_SCAN_RESULT_IND_ID:
-        break;
     case SL_WFX_SCAN_COMPLETE_IND_ID:
         state_set_ssid_scanning(false);
         break;
+    case SL_WFX_STARTUP_IND_ID:       // fall through
+    case SL_WFX_CONFIGURATION_REQ_ID: // fall through
+    case SL_WFX_STOP_SCAN_CNF_ID:
+        // Generic debug message for OK but no handler function needed
+        dbg("(post ");
+        dbg_message_id(event_payload->header.id);
+        dbg(") OK\n");
+        break;
     default:
-        // TODO: post more events
-        dbg("(FAIL unimplemented ");
+        dbg("(post unimplemented ");
         dbg_hex16(event_payload->header.id);
-        dbg(")\n");
+        dbg(") FAIL\n");
         return SL_STATUS_FAIL;
     }
-    dbg("(OK ");
-    dbg_message_id(event_payload->header.id);
-    dbg(")\n");
     // Copy the event payload to the buffer array in the wfx driver context
     memcpy(_context_ptr->event_payload_buffer, (void *)event_payload,
         event_payload->header.length);

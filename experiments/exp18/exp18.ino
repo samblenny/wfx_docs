@@ -29,7 +29,6 @@ sl_status_t drain_pending_frames(uint16_t limit) {
     if(result != SL_STATUS_OK) {
       break;
     }
-    dbg((i%80!=79)?"$":"$\n");
   }
   return result;
 }
@@ -55,11 +54,11 @@ void setup() {
   // Initialize the radio
   remember_context_ptr(&context);
   result = sl_wfx_init(&context);
-  if(result == SL_STATUS_OK) {
-    dbg("============================\n");
-    dbg("=== sl_wfx_init() -> OK ====\n");
-    dbg("============================\n");
-  } else {
+  if(result != SL_STATUS_OK) {
+    dbg_set_mute(false);
+    dbg("(FAIL sl_wfx_init status:");
+    dbg_hex32(result);
+    dbg(")\n");
     return;
   }
   dbg_set_mute(false);
@@ -67,35 +66,21 @@ void setup() {
   // Start SSID Scan
   drain_pending_frames(500);
   hal_wait(200);
-  dbg("### Starting Active SSID Scan ###\n");
-  sl_wfx_send_scan_command(WFM_SCAN_MODE_ACTIVE, NULL, 0, NULL, 0, NULL, 0, NULL);
-  // Wait for scan results
-  for(int i=0; state_ssid_scanning() && i<500; i++) {
-    if(!hal_wirq_asserted()) {
-      hal_wait(3);
-      dbg((i%80!=79) ? "." : ".\n");
+  dbg("### Starting Passive SSID Scan ###\n");
+  for(int i=0; i<3; i++) {
+    sl_wfx_send_scan_command(WFM_SCAN_MODE_PASSIVE, NULL, 0, NULL, 0, NULL, 0, NULL);
+    // Wait for scan results
+    for(int j=0; state_ssid_scanning() && j<500; j++) {
+      if(!hal_wirq_asserted()) {
+        hal_wait(3);
+      }
+      result = drain_pending_frames(500);
     }
-    result = drain_pending_frames(500);
   }
   hal_wait(200);
-  dbg("\n### Stoping Active SSID Scan ###\n");
+  dbg("### Stoping Passive SSID Scan ###\n");
   sl_wfx_send_stop_scan_command();
   hal_wait(200);
-  dbg("\n### Starting Passive SSID Scan ###\n");
-  sl_wfx_send_scan_command(WFM_SCAN_MODE_PASSIVE, NULL, 0, NULL, 0, NULL, 0, NULL);
-  // Wait for scan results
-  for(int i=0; state_ssid_scanning() && i<500; i++) {
-    if(!hal_wirq_asserted()) {
-      hal_wait(3);
-      dbg((i%80!=79) ? "." : ".\n");
-    }
-    result = drain_pending_frames(500);
-  }
-  hal_wait(200);
-  dbg("\n### Stoping Passive SSID Scan ###\n");
-  sl_wfx_send_stop_scan_command();
-  hal_wait(200);
-  dbg("_\n");
   sl_wfx_deinit();
 }
 

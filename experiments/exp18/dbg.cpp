@@ -26,6 +26,7 @@ void dbg_set_mute(bool mute) {
 }
 
 void dbg(const char *str)  { if(!DBG_MUTE) { Serial.print(str);      Serial.flush(); } }
+void dbg_i8(int8_t val)    { if(!DBG_MUTE) { Serial.print(val, DEC); Serial.flush(); } }
 void dbg_u8(uint8_t val)   { if(!DBG_MUTE) { Serial.print(val, DEC); Serial.flush(); } }
 void dbg_u16(uint16_t val) { if(!DBG_MUTE) { Serial.print(val, DEC); Serial.flush(); } }
 void dbg_u32(uint32_t val) { if(!DBG_MUTE) { Serial.print(val, DEC); Serial.flush(); } }
@@ -113,6 +114,20 @@ void dbg_decode_u32(uint32_t val) {
     }
 }
 
+// Decode a MAC address of size SL_WFX_MAC_ADDR_SIZE
+void dbg_mac_addr(uint8_t *mac) {
+    for(int i=0; i<SL_WFX_MAC_ADDR_SIZE; i++) {
+        if(DBG_HIDE_MAC) {
+            dbg("--");
+        } else {
+            dbg_hex8(mac[i]);
+        }
+        if(i+1 < SL_WFX_MAC_ADDR_SIZE) {
+            dbg(":");
+        }
+    }
+}
+
 // Dump the startup response (firmware version, MAC addresses, etc.)
 void dbg_startup_ind(sl_wfx_startup_ind_t *startup) {
     dbg("startup_ind:");
@@ -133,19 +148,7 @@ void dbg_startup_ind(sl_wfx_startup_ind_t *startup) {
         dbg("\n  mac_addr[");
         dbg_u8(i);
         dbg("]: ");
-        if(DBG_HIDE_MAC) {
-            dbg("--");
-        } else {
-            dbg_hex8(b->mac_addr[i][0]);
-        }
-        for(uint8_t j=1; j<SL_WFX_MAC_ADDR_SIZE; j++) {
-            dbg(":");
-            if(DBG_HIDE_MAC) {
-                dbg("--");
-            } else {
-                dbg_hex8(b->mac_addr[i][j]);
-            }
-        }
+        dbg_mac_addr(b->mac_addr[i]);
     }
     dbg("\n  api_version_minor: ");
     dbg_u8(b->api_version_minor);
@@ -210,4 +213,33 @@ void dbg_message_id(uint8_t id) {
     default:
         dbg_hex16(id);
     }
+}
+
+// Decode an SSID scan result message
+void dbg_scan_result(sl_wfx_scan_result_ind_body_t *sr) {
+    // Ignore hidden SSIDs (lenth 0, or null chars for non-zero length SSID)
+    if(sr->ssid_def.ssid_length == 0 || sr->ssid_def.ssid[0] == 0) {
+        return;
+    }
+    // Copy the SSID to a new array to make 100% sure it's null terminated
+    char ssid[SL_WFX_SSID_SIZE+1];
+    memset((void *)ssid, 0, SL_WFX_SSID_SIZE+1);
+    uint32_t len = sr->ssid_def.ssid_length;
+    len = (SL_WFX_SSID_SIZE < len) ? SL_WFX_SSID_SIZE : len;
+    if(DBG_HIDE_MAC) {
+        memset((void *)ssid, (uint8_t)'-', len);
+    } else {
+        memcpy((void *)ssid, (void *)(sr->ssid_def.ssid), len);
+    }
+
+    // Debug print the scan result
+    dbg("(scan ");
+    dbg_mac_addr(sr->mac);
+    dbg(" ");
+    dbg_i8((sr->rcpi/2) - 110);
+    dbg("dBm ch");
+    dbg_u8(sr->channel);
+    dbg(" '");
+    dbg((const char *)ssid);
+    dbg("')\n");
 }

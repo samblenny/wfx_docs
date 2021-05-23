@@ -1,1 +1,65 @@
+### Starting Passive SSID Scan ###
+(wait_ev START_SCAN_CNF) OK
+(wait_conf START_SCAN_CNF 5000)
+(state scanning true)
+(wait_ev START_SCAN_CNF) OK
+(OK wait_conf)
+(scan --:--:--:--:--:-- -33dBm ch1 '------------')
+(scan --:--:--:--:--:-- -88dBm ch1 '---------')
+(scan --:--:--:--:--:-- -85dBm ch1 '----------')
+(scan --:--:--:--:--:-- -89dBm ch1 '----------')
+(scan --:--:--:--:--:-- -88dBm ch6 '-----------')
+(scan --:--:--:--:--:-- -83dBm ch6 '---------------------------')
+(scan --:--:--:--:--:-- -81dBm ch6 '----------')
+(scan --:--:--:--:--:-- -64dBm ch6 '--------------')
+(scan --:--:--:--:--:-- -75dBm ch6 '-------------')
+(scan --:--:--:--:--:-- -75dBm ch11 '----------')
+(scan --:--:--:--:--:-- -84dBm ch2 '------------')
+(scan --:--:--:--:--:-- -79dBm ch9 '---------')
+(state scanning false)
+(wait_ev START_SCAN_CNF) OK
+(wait_conf START_SCAN_CNF 5000)
+(state scanning true)
+(wait_ev START_SCAN_CNF) OK
+(OK wait_conf)
+(scan --:--:--:--:--:-- -85dBm ch1 '----------')
+(scan --:--:--:--:--:-- -89dBm ch1 '-------')
+(scan --:--:--:--:--:-- -89dBm ch1 '----------')
+(scan --:--:--:--:--:-- -90dBm ch1 '-----------------')
+(scan --:--:--:--:--:-- -33dBm ch1 '------------')
+(scan --:--:--:--:--:-- -90dBm ch1 '----------')
+(scan --:--:--:--:--:-- -88dBm ch6 '-----------')
+(scan --:--:--:--:--:-- -81dBm ch6 '----------')
+(scan --:--:--:--:--:-- -81dBm ch6 '--------------')
+(scan --:--:--:--:--:-- -87dBm ch6 '----------')
+(scan --:--:--:--:--:-- -87dBm ch2 '------------')
+(state scanning false)
+(wait_ev START_SCAN_CNF) OK
+(wait_conf START_SCAN_CNF 5000)
+(state scanning true)
+(wait_ev START_SCAN_CNF) OK
+(OK wait_conf)
+(scan --:--:--:--:--:-- -32dBm ch1 '------------')
+(scan --:--:--:--:--:-- -88dBm ch1 '---------')
+(scan --:--:--:--:--:-- -89dBm ch1 '----------')
+(scan --:--:--:--:--:-- -85dBm ch1 '----------')
+(scan --:--:--:--:--:-- -90dBm ch1 '-------')
+(scan --:--:--:--:--:-- -89dBm ch1 '----------')
+(scan --:--:--:--:--:-- -88dBm ch6 '-----------')
+(scan --:--:--:--:--:-- -86dBm ch6 '----------')
+(scan --:--:--:--:--:-- -83dBm ch6 '---------------------------')
+(scan --:--:--:--:--:-- -71dBm ch6 '-------------')
+(scan --:--:--:--:--:-- -85dBm ch2 '------------')
+(scan --:--:--:--:--:-- -89dBm ch3 '-------------------')
+(state scanning false)
+### Stoping Passive SSID Scan ###
+(wait_ev STOP_SCAN_CNF) OK
+(wait_conf STOP_SCAN_CNF 5000)
+(post STOP_SCAN_CNF) OK
+(wait_ev STOP_SCAN_CNF) OK
+(OK wait_conf)
+(set_wup 0)
+deinit_bus() -> OK(_alloc_highwater_mark: 511, context->used_buffers: 1)
+hal_deinit_bus
+hal_deinit
 
