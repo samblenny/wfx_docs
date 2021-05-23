@@ -3,6 +3,7 @@ unofficial WF200 documentation
 
 ## Experiments
 
+- [exp18: SSID Scan Results](experiments/exp18)
 - [exp17: HAL and SSID Scan](experiments/exp17)
 - [exp16](experiments/exp16)
 - [exp15](experiments/exp15)
