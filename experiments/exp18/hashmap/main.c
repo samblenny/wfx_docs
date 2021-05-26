@@ -110,7 +110,7 @@ void print_ssid(ssid_t *ssid) {
     const bool hidden_len_0 = len == 0;
     const bool hidden_null = ssid->ssid[0] == 0;
     if(hidden_len_0)     { printf("'' 0");  }                     // Hidden
-    else if(hidden_null) { printf("'' %u", len); }                // Hidden
+    else if(hidden_null) { printf("-- %u", len); }                // Hidden
     else                 { printf("'%s' %u", ssid->ssid, len); }  // Normal
 }
 
